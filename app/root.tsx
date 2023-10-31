@@ -1,5 +1,9 @@
 import { cssBundleHref } from "@remix-run/css-bundle";
-import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
+import {
+  json,
+  type LinksFunction,
+  type LoaderFunctionArgs,
+} from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -7,6 +11,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
 
 import stylesheet from "~/tailwind.css";
@@ -16,7 +21,21 @@ export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
 ];
 
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const ENV_CONFIG = {
+    SESSION_SECRET: process.env.SESSION_SECRET,
+    GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
+    WEATHER_VISUAL_CROSSING_API_KEY:
+      process.env.WEATHER_VISUAL_CROSSING_API_KEY,
+  };
+
+  return json({
+    ENV: ENV_CONFIG,
+  });
+};
+
 export default function App() {
+  const { ENV } = useLoaderData<typeof loader>();
   return (
     <html lang="en" className="h-full">
       <head>
@@ -28,6 +47,11 @@ export default function App() {
       <body className="tw-h-full">
         <Outlet />
         <ScrollRestoration />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(ENV)}`,
+          }}
+        />
         <Scripts />
         <LiveReload />
       </body>

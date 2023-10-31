@@ -9,6 +9,7 @@ import { getAutocompletePrediction } from "~/utils";
 import {
   LocationPrediction,
   AutocompleteResponse,
+  ENV_TYPES,
 } from "~/types/location.types";
 
 export default function LocationAutoComplete() {
@@ -29,9 +30,10 @@ export default function LocationAutoComplete() {
             return;
           }
 
-          // TODO: Add type
           const result = await getAutocompletePrediction({
             input: request.input,
+            GOOGLE_API_KEY: window.ENV
+              .GOOGLE_API_KEY as ENV_TYPES["GOOGLE_API_KEY"],
           });
           if (result === null) {
             return;

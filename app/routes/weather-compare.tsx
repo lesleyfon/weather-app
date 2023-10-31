@@ -5,6 +5,8 @@ import { getWeatherLocation } from "~/utils";
 import JSONPretty from "react-json-pretty";
 import "react-json-pretty/themes/monikai.css";
 
+import { ENV_TYPES } from "~/types/location.types";
+
 export const loader: LoaderFunction = async ({
   request,
 }: LoaderFunctionArgs) => {
@@ -19,7 +21,12 @@ export const loader: LoaderFunction = async ({
     return { firstDate: "", secondDate: "" };
   }
 
-  const weatherParams = { longitude, latitude };
+  const weatherParams = {
+    longitude,
+    latitude,
+    WEATHER_VISUAL_CROSSING_API_KEY: process.env
+      .WEATHER_VISUAL_CROSSING_API_KEY as ENV_TYPES["WEATHER_VISUAL_CROSSING_API_KEY"],
+  };
 
   const dataOne = await getWeatherLocation({
     ...weatherParams,

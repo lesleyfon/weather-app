@@ -5,6 +5,7 @@ import DatePickerComponent from "~/components/datepicker";
 
 import { getGeocode } from "~/utils";
 import LocationAutoComplete from "~/components/locationautocomplete";
+import { ENV_TYPES } from "~/types/location.types";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const form = await request.formData();
@@ -18,14 +19,17 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   if (!firstDate && !secondDate) {
     return redirect("/");
   }
-  const response = await getGeocode({ input: location });
+  const response = await getGeocode({
+    input: location,
+    GOOGLE_API_KEY: process.env.GOOGLE_API_KEY as ENV_TYPES["GOOGLE_API_KEY"],
+  });
 
-  const loct = response?.results[0]?.geometry?.location;
+  const responseData = response?.results[0]?.geometry?.location;
 
   const queryParams = new URLSearchParams();
 
-  if (loct) {
-    const { lng, lat } = loct;
+  if (responseData) {
+    const { lng, lat } = responseData;
     queryParams.set("longitude", lng.toString());
     queryParams.set("latitude", lat.toString());
 
