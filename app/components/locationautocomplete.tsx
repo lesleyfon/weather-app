@@ -4,7 +4,7 @@ import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { debounce } from "@mui/material/utils";
 
-import { getAutocompletePrediction } from "~/utils";
+import { getAutocompletePrediction } from "~/api/weather.api";
 
 import {
   LocationPrediction,
