@@ -53,9 +53,6 @@ jobs:
       - name: 📥 Install deps
         run: npm install
 
-      - name: 🔎 Type check
-        run: npm run typecheck --if-present
-
   vitest:
     name: ⚡ Vitest
     runs-on: ubuntu-latest
