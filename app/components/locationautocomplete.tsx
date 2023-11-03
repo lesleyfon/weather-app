@@ -1,11 +1,9 @@
-import { Fragment, useEffect, useMemo, useState } from "react";
-
 import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { debounce } from "@mui/material/utils";
+import { Fragment, useEffect, useMemo, useState } from "react";
 
 import { getAutocompletePrediction } from "~/api/weather.api";
-
 import {
   LocationPrediction,
   AutocompleteResponse,
@@ -67,7 +65,7 @@ export default function LocationAutoComplete() {
     return () => {
       active = false;
     };
-  }, [query]);
+  }, [query, fetch]);
 
   return (
     <div className="tw-top-16 tw-w-full">

@@ -28,7 +28,10 @@ export const celsiusToFahrenheit = (temp: number) => {
 
 export const formatDataToGraph = (data: WeatherData) => {
   if (!data?.days[0]) return [];
-  const { hours, tempmax, tempmin } = data?.days[0];
+
+  const tempmin = data?.days?.[0]?.tempmin || 0;
+  const hours = data?.days?.[0]?.hours || [];
+  const tempmax = data?.days?.[0]?.tempmax || 0;
 
   const d = hours.map((hour): LineGraphReturnedData => {
     const { temp, datetime, windspeed, precip, humidity } = hour;

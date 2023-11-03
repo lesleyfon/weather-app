@@ -1,13 +1,13 @@
 import { LoaderFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { getWeatherLocation } from "~/api/weather.api";
 
 import "react-json-pretty/themes/monikai.css";
 
-import { ENV_TYPES, HourWeatherData } from "~/types/location.types";
+import { getWeatherLocation } from "~/api/weather.api";
 import LineGraph from "~/components/linegraph";
 import data1 from "~/temp-data/data1.json";
 import data2 from "~/temp-data/data2.json";
+import { ENV_TYPES, HourWeatherData } from "~/types/location.types";
 import { celsiusToFahrenheit, militaryTimeToStandardTime } from "~/utils";
 
 export const loader: LoaderFunction = async ({
@@ -77,7 +77,7 @@ const TableRow = ({
         }
 
         return (
-          <td>
+          <td key={objKey}>
             <p className="tw-w-[120px] tw-py-5 tw-text-center tw-leading-[1.5] tw-h-16">
               {tdValue} {symbol}
             </p>
@@ -100,6 +100,7 @@ const WeatherCompareTable = ({ data }: { data: HourWeatherData[] }) => {
               </th>
               {data.map((hour) => (
                 <td
+                  key={hour.datetime}
                   style={{
                     tableLayout: "fixed",
                     width: "200px",

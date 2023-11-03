@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+
 import type {
   ENV_TYPES,
   AutocompleteResponse,
@@ -61,7 +62,9 @@ export async function getGeocode({
     const data: ResultsType = await response.json();
 
     return data;
-  } catch (error) {}
+  } catch (error) {
+    console.error("error", error);
+  }
 }
 
 export async function getWeatherLocation({

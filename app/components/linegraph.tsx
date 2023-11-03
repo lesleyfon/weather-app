@@ -1,8 +1,9 @@
 import { AreaChart, Tooltip, XAxis, YAxis, Label, Area } from "recharts";
 
 import type { WeatherData } from "~/types/location.types";
-import CustomizedCursor from "./chartcustomizedcursor";
 import { dateStringTo, formatDataToGraph } from "~/utils";
+
+import CustomizedCursor from "./chartcustomizedcursor";
 
 export default function LineGraph({ data }: { data: WeatherData }) {
   // Do something like this: https://www.weather25.com/north-america/usa/texas/lubbock?page=past-weather#day=28&month=10

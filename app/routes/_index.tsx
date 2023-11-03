@@ -1,9 +1,8 @@
-import { Form } from "@remix-run/react";
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
-
-import DatePickerComponent from "~/components/datepicker";
+import { Form } from "@remix-run/react";
 
 import { getGeocode } from "~/api/weather.api";
+import DatePickerComponent from "~/components/datepicker";
 import LocationAutoComplete from "~/components/locationautocomplete";
 import { ENV_TYPES } from "~/types/location.types";
 

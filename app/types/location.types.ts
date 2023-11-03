@@ -83,7 +83,7 @@ export interface AutocompleteResponse {
   status: string;
 }
 
-export type LineGraphReturnedData = {
+export interface LineGraphReturnedData {
   name: string;
   temp: string;
   tempmax: string;
@@ -91,8 +91,8 @@ export type LineGraphReturnedData = {
   precipitation: number;
   humidity: number;
   windspeed: number;
-};
-export type HourWeatherData = {
+}
+export interface HourWeatherData {
   datetime: string;
   datetimeEpoch: number;
   temp: number;
@@ -118,9 +118,9 @@ export type HourWeatherData = {
   icon: string;
   stations: string[];
   source: string;
-};
+}
 
-export type WeatherData = {
+export interface WeatherData {
   queryCost: number;
   latitude: number;
   longitude: number;
@@ -167,8 +167,9 @@ export type WeatherData = {
     source: string;
     hours: HourWeatherData[];
   }[];
-  stations: {
-    [stationId: string]: {
+  stations: Record<
+    string,
+    {
       distance: number;
       latitude: number;
       longitude: number;
@@ -177,11 +178,11 @@ export type WeatherData = {
       name: string;
       quality: number;
       contribution: number;
-    };
-  };
-};
+    }
+  >;
+}
 
-export type TooltipPayload = {
+export interface TooltipPayload {
   stroke: string;
   strokeWidth: number;
   fill: string;
@@ -198,4 +199,4 @@ export type TooltipPayload = {
     humidity: string;
     windspeed: string;
   };
-};
+}
