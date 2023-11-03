@@ -3,7 +3,7 @@ import { redirect, type ActionFunctionArgs } from "@remix-run/node";
 
 import DatePickerComponent from "~/components/datepicker";
 
-import { getGeocode } from "~/utils";
+import { getGeocode } from "~/api/weather.api";
 import LocationAutoComplete from "~/components/locationautocomplete";
 import { ENV_TYPES } from "~/types/location.types";
 
