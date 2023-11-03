@@ -92,6 +92,34 @@ export type LineGraphReturnedData = {
   humidity: number;
   windspeed: number;
 };
+export type HourWeatherData = {
+  datetime: string;
+  datetimeEpoch: number;
+  temp: number;
+  feelslike: number;
+  humidity: number;
+  dew: number;
+  precip: number;
+  precipprob: number;
+  snow: number;
+  snowdepth: number;
+  preciptype: string | null;
+  windgust: number;
+  windspeed: number;
+  winddir: number;
+  pressure: number;
+  visibility: number;
+  cloudcover: number;
+  solarradiation: number;
+  solarenergy: number;
+  uvindex: number;
+  severerisk: number;
+  conditions: string;
+  icon: string;
+  stations: string[];
+  source: string;
+};
+
 export type WeatherData = {
   queryCost: number;
   latitude: number;
@@ -137,33 +165,7 @@ export type WeatherData = {
     icon: string;
     stations: string[];
     source: string;
-    hours: {
-      datetime: string;
-      datetimeEpoch: number;
-      temp: number;
-      feelslike: number;
-      humidity: number;
-      dew: number;
-      precip: number;
-      precipprob: number;
-      snow: number;
-      snowdepth: number;
-      preciptype: string | null;
-      windgust: number;
-      windspeed: number;
-      winddir: number;
-      pressure: number;
-      visibility: number;
-      cloudcover: number;
-      solarradiation: number;
-      solarenergy: number;
-      uvindex: number;
-      severerisk: number;
-      conditions: string;
-      icon: string;
-      stations: string[];
-      source: string;
-    }[];
+    hours: HourWeatherData[];
   }[];
   stations: {
     [stationId: string]: {
