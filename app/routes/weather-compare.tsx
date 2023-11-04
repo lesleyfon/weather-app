@@ -57,38 +57,71 @@ const hourDataKeysToFullWord = {
   visibility: ["Visibility", "Miles"],
 };
 const TableRow = ({
-  data,
   objKey,
   symbol,
+  weatherDataOne,
+  weatherDataTwo,
 }: {
   objKey: string;
   symbol: string;
-  data: HourWeatherData[];
+  weatherDataTwo: HourWeatherData[];
+  weatherDataOne: HourWeatherData[];
 }) => {
   return (
     <>
-      {data.map((hour) => {
-        let tdValue;
+      {weatherDataOne.map((hour) => {
+        let tdValueOne;
+
+        let tdValueTwo = weatherDataTwo.find(
+          (hourTwo) => hourTwo[objKey as keyof typeof hourTwo],
+        )?.[objKey as keyof typeof hour];
+
         if (objKey === "temp" || objKey === "feelslike") {
           const temperature = hour[objKey as keyof typeof hour] ?? 0;
-          tdValue = celsiusToFahrenheit(parseFloat(temperature.toString()));
+          tdValueOne = celsiusToFahrenheit(parseFloat(temperature.toString()));
+
+          tdValueTwo = tdValueTwo
+            ? celsiusToFahrenheit(parseFloat(tdValueTwo.toString()))
+            : 0;
         } else {
-          tdValue = hour[objKey as keyof typeof hour];
+          tdValueOne = hour[objKey as keyof typeof hour];
         }
 
         return (
-          <td key={objKey}>
-            <p className="tw-w-[120px] tw-py-5 tw-text-center tw-leading-[1.5] tw-h-16">
-              {tdValue} {symbol}
-            </p>
-          </td>
+          <th>
+            <p className=" tw-text-left tw-py-2 tw-h-10" />
+            <ul>
+              <li className="tw-bg-[#d1d6f4]">
+                <p className="tw-py-3 tw-text-center tw-leading-[1.5]">
+                  {tdValueOne}
+                  {symbol}
+                </p>
+              </li>
+              <li className=" tw-bg-white">
+                <p className="tw-py-3 tw-text-center tw-leading-[1.5]">
+                  {tdValueTwo}
+                  {symbol}
+                </p>
+              </li>
+            </ul>
+          </th>
         );
       })}
     </>
   );
 };
 
-const WeatherCompareTable = ({ data }: { data: HourWeatherData[] }) => {
+const WeatherCompareTable = ({
+  weatherDataOne,
+  weatherDataTwo,
+  firstDatetime,
+  secondDatetime,
+}: {
+  firstDatetime: string;
+  secondDatetime: string;
+  weatherDataOne: HourWeatherData[];
+  weatherDataTwo: HourWeatherData[];
+}) => {
   return (
     <div className="tw-w-[1060px] tw-overflow-x-auto tw-relative tw-scroll-smooth  tw-shadow-[0_2px_24px_0_rgba(63,63,63,0.1)] tw-min-h-[800px] tw-rounded-xl tw-my-8">
       <table className="tw-w-full ">
@@ -98,7 +131,7 @@ const WeatherCompareTable = ({ data }: { data: HourWeatherData[] }) => {
               <th className="tw-text-left tw-sticky tw-z-[1] tw-font-semibold tw-w-[120px] tw-text-base tw-pl-4 tw--left-px">
                 <div className="tw-w-[120px] tw-z-[1] tw-font-semibold  tw-text-base tw-pl-4 tw--left-px" />
               </th>
-              {data.map((hour) => (
+              {weatherDataOne.map((hour) => (
                 <td
                   key={hour.datetime}
                   style={{
@@ -118,9 +151,28 @@ const WeatherCompareTable = ({ data }: { data: HourWeatherData[] }) => {
           {Object.entries(hourDataKeysToFullWord).map(
             ([key, [thTitle, symbol]]) => (
               <>
-                <tr className=" hover:tw-bg-[#e6e9f9] tw-border tw-border-t-0 tw-border-x-0 tw-border-[#d1d6f4] tw-border-b">
-                  <th>{thTitle}</th>
-                  <TableRow objKey={key} symbol={symbol} data={data} />)
+                <tr className=" hover:tw-bg-[#e6e9f9] tw-border tw-border-t-0 tw-border-x-0 tw-border-[#b5bcec] tw-border-b">
+                  <th>
+                    <p className=" tw-text-left tw-py-2">{thTitle}</p>
+                    <ul>
+                      <li className=" tw-bg-[#d1d6f4]">
+                        <p className="tw-py-3 tw-text-center tw-leading-[1.5]">
+                          {firstDatetime}
+                        </p>
+                      </li>
+                      <li>
+                        <p className="tw-py-3 tw-text-center tw-leading-[1.5]">
+                          {secondDatetime}
+                        </p>
+                      </li>
+                    </ul>
+                  </th>
+                  <TableRow
+                    objKey={key}
+                    symbol={symbol}
+                    weatherDataOne={weatherDataOne}
+                    weatherDataTwo={weatherDataTwo}
+                  />
                 </tr>
               </>
             ),
@@ -151,7 +203,12 @@ export default function RemixLoader() {
       </div>
       {shouldRender ? (
         <section className="tw-flex tw-justify-center">
-          <WeatherCompareTable data={dataOne.days[0].hours} />
+          <WeatherCompareTable
+            firstDatetime={dataOne.days[0].datetime}
+            secondDatetime={dataTwo.days[0].datetime}
+            weatherDataOne={dataOne.days[0].hours}
+            weatherDataTwo={dataTwo.days[0].hours}
+          />
         </section>
       ) : null}
     </main>
