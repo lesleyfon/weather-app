@@ -50,3 +50,16 @@ export const formatDataToGraph = (data: WeatherData) => {
 
   return d;
 };
+
+export const hourDataKeysToFullWord = {
+  temp: ["Temperature", "°F"],
+  feelslike: ["Feels Like", "°F"],
+  conditions: ["Conditions", ""],
+  precip: ["Precipitation", " in"],
+  snow: ["Chance Of Snow", "%"],
+  humidity: ["Humidity", "%"],
+  windspeed: ["Wind Speed", " mph"],
+  windgust: ["Wind Gust", " Miles"],
+  cloudcover: ["Cloud Cover", "%"],
+  visibility: ["Visibility", " Miles"],
+};
