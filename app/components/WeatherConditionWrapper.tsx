@@ -7,7 +7,6 @@ import {
 } from "~/assets/svg/";
 
 const WeatherConditionSVG = ({ condition }: { condition: string }) => {
-  console.log(condition);
   if (condition.includes("rain")) {
     return <WeatherRainSVG />;
   }

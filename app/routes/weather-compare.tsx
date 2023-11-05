@@ -4,8 +4,8 @@ import { useLoaderData } from "@remix-run/react";
 import "react-json-pretty/themes/monikai.css";
 
 import { getWeatherLocation } from "~/api/weather.api";
-import WeatherCompareTable from "~/components/WeatherCompareTable";
 import LineGraph from "~/components/linegraph";
+import WeatherCompareTable from "~/components/WeatherCompareTable";
 import data1 from "~/temp-data/data1.json";
 import data2 from "~/temp-data/data2.json";
 import { ENV_TYPES } from "~/types/location.types";

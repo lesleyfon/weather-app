@@ -49,7 +49,7 @@ const TableRow = ({
         const liConditionClasses =
           objKey === "conditions" ? "!tw-h-[76px]" : "";
         return (
-          <th>
+          <th key={objKey}>
             <p className=" tw-text-left tw-py-2 tw-h-10" />
             <ul>
               <li className={`tw-bg-[#d1d6f4] ${liConditionClasses}`}>
@@ -70,7 +70,6 @@ const TableRow = ({
                   {" "}
                   {objKey === "conditions" ? (
                     <>
-                      {console.log(hourTwo?.conditions)}
                       <WeatherConditionSVG
                         condition={hourTwo?.conditions.toLowerCase() as string}
                       />
