@@ -31,16 +31,16 @@ export const loader: LoaderFunction = async ({
       .WEATHER_VISUAL_CROSSING_API_KEY as ENV_TYPES["WEATHER_VISUAL_CROSSING_API_KEY"],
   };
 
-  const dataOne =
-    (await getWeatherLocation({
+  const [dataOne = data1, dataTwo = data2] = await Promise.all([
+    getWeatherLocation({
       ...weatherParams,
       date: firstDate!,
-    })) ?? data1;
-  const dataTwo =
-    (await getWeatherLocation({
+    }),
+    getWeatherLocation({
       ...weatherParams,
       date: secondDate!,
-    })) ?? data2;
+    }),
+  ]);
 
   return { dataOne, dataTwo };
 };
@@ -55,12 +55,10 @@ export default function RemixLoader() {
         {!shouldRender ? (
           <h1>No data / Incomplete information</h1>
         ) : (
-          <>
-            <section className=" tw-flex tw-flex-col tw-gap-5">
-              <LineGraph data={dataOne} />
-              <LineGraph data={dataTwo} />
-            </section>
-          </>
+          <section className=" tw-flex tw-flex-col tw-gap-5">
+            <LineGraph data={dataOne} />
+            <LineGraph data={dataTwo} />
+          </section>
         )}
       </div>
       {shouldRender ? (
