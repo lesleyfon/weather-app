@@ -200,3 +200,27 @@ export interface TooltipPayload {
     windspeed: string;
   };
 }
+
+export interface WeatherCompareTableProps {
+  firstDatetime: string;
+  secondDatetime: string;
+  weatherDataOne: HourWeatherData[];
+  weatherDataTwo: HourWeatherData[];
+}
+
+export interface TableRowPropType {
+  objKey: string;
+  symbol: string;
+  weatherDataTwo: HourWeatherData[];
+  weatherDataOne: HourWeatherData[];
+}
+
+export interface TableDataListItemPropType {
+  tdValue: string | number;
+  liClassNames: string;
+  hour?: HourWeatherData;
+  objKey?: string;
+  symbol?: string;
+  liSpanClass?: string;
+  liParagraphClassNames?: string;
+}
