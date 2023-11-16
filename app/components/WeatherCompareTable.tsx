@@ -4,6 +4,7 @@ import {
   WeatherCompareTableProps,
   TableRowPropType,
   TableDataListItemPropType,
+  HourWeatherData,
 } from "~/types/location.types";
 import {
   celsiusToFahrenheit,
@@ -24,9 +25,9 @@ const ListItem = ({
 }: TableDataListItemPropType) => (
   <li className={`${liClassNames}`}>
     <p className={liParagraphClassNames}>
-      {objKey === "conditions" && hour?.conditions && (
+      {objKey === "conditions" && hour?.conditions ? (
         <WeatherConditionSVG condition={hour?.conditions.toLowerCase()} />
-      )}
+      ) : null}
       <span className={liSpanClass}>
         {tdValue}
         {symbol}
@@ -35,55 +36,47 @@ const ListItem = ({
   </li>
 );
 
+const getValue = (key: string, value: number | string) => {
+  if (key === "temp" || key === "feelslike") {
+    return celsiusToFahrenheit(parseFloat(value.toString()));
+  }
+  return value;
+};
+
 const TableRow = ({
   objKey,
   symbol,
   weatherDataOne,
   weatherDataTwo,
-}: TableRowPropType) => {
+}: TableRowPropType & { objKey: keyof HourWeatherData }) => {
+  const hourTwo = weatherDataTwo.find(
+    (h) => (h[objKey] || Number.isFinite(h[objKey])) && h,
+  );
   return weatherDataOne.map((hour) => {
-    let tdValueOne;
-
-    const hourTwo = weatherDataTwo.find(
-      (h) =>
-        (h[objKey as keyof typeof h] ||
-          Number.isFinite(h[objKey as keyof typeof h])) &&
-        h,
-    );
-    let tdValueTwo = hourTwo?.[objKey as keyof typeof hour];
-
-    if (objKey === "temp" || objKey === "feelslike") {
-      const temperature = hour[objKey as keyof typeof hour] ?? 0;
-      tdValueOne = celsiusToFahrenheit(parseFloat(temperature.toString()));
-      tdValueTwo = tdValueTwo
-        ? celsiusToFahrenheit(parseFloat(tdValueTwo.toString()))
-        : 0;
-    } else {
-      tdValueOne = hour[objKey as keyof typeof hour];
-    }
+    const celValOne = getValue(objKey, hour[objKey] as string);
+    const cellValTwo = getValue(objKey, hourTwo?.[objKey] as string);
 
     const conditionClasses = objKey === "conditions" ? "!tw-text-xs" : "";
     const liConditionClasses = objKey === "conditions" ? "!tw-h-[76px]" : "";
+    const classnames = {
+      ["0"]: `tw-bg-[#d1d6f4] ${liConditionClasses}`,
+      ["1"]: `tw-bg-white ${liConditionClasses}`,
+    };
     return (
       <th key={objKey}>
         <p className=" tw-text-left tw-py-2 tw-h-10" />
         <ul>
-          <ListItem
-            liClassNames={`tw-bg-[#d1d6f4] ${liConditionClasses}`}
-            liSpanClass={conditionClasses}
-            hour={hour}
-            tdValue={tdValueOne as string | number}
-            symbol={symbol}
-            objKey={objKey}
-          />
-          <ListItem
-            liClassNames={`tw-bg-white ${liConditionClasses}`}
-            liSpanClass={conditionClasses}
-            hour={hour}
-            tdValue={tdValueTwo as string | number}
-            symbol={symbol}
-            objKey={objKey}
-          />
+          {[celValOne, cellValTwo].map((val, idx) => (
+            <ListItem
+              key={val}
+              liClassNames={classnames?.[idx as 0 | 1]}
+              liSpanClass={conditionClasses}
+              hour={hour}
+              tdValue={val}
+              symbol={symbol}
+              objKey={objKey}
+            />
+          ))}
         </ul>
       </th>
     );
@@ -151,7 +144,7 @@ const WeatherCompareTable = ({
                   </ul>
                 </th>
                 <TableRow
-                  objKey={key}
+                  objKey={key as keyof HourWeatherData}
                   symbol={symbol}
                   weatherDataOne={weatherDataOne}
                   weatherDataTwo={weatherDataTwo}
