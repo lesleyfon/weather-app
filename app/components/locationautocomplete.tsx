@@ -3,11 +3,9 @@ import { CheckIcon } from "@heroicons/react/20/solid";
 import { debounce } from "@mui/material/utils";
 import { Fragment, useEffect, useMemo, useState } from "react";
 
-import { getAutocompletePrediction } from "~/api/weather.api";
 import {
   LocationPrediction,
   AutocompleteResponse,
-  ENV_TYPES,
 } from "~/types/location.types";
 
 export default function LocationAutoComplete() {
@@ -15,7 +13,7 @@ export default function LocationAutoComplete() {
   const [options, setOptions] = useState<readonly LocationPrediction[]>([]);
   const [query, setQuery] = useState("");
 
-  const fetch = useMemo(
+  const fetchData = useMemo(
     () =>
       debounce(
         async (
@@ -24,19 +22,16 @@ export default function LocationAutoComplete() {
           },
           callback: (result: AutocompleteResponse) => void,
         ) => {
-          if (window === undefined || request.input === null) {
+          // TODO: add better error handling
+          if (window === undefined || request === null) {
             return;
           }
+          const result = await fetch(`api/google/${request.input}`);
+          const response = await result.json();
 
-          const result = await getAutocompletePrediction({
-            input: request.input,
-            GOOGLE_API_KEY: window.ENV
-              .GOOGLE_API_KEY as ENV_TYPES["GOOGLE_API_KEY"],
-          });
-          if (result === null) {
-            return;
-          }
-          callback(result);
+          const { data } = response;
+
+          callback(data);
         },
         100,
       ),
@@ -51,7 +46,7 @@ export default function LocationAutoComplete() {
       return;
     }
 
-    fetch({ input: query }, (results) => {
+    fetchData({ input: query }, (results) => {
       if (active) {
         let newOptions: readonly LocationPrediction[] = [];
 
@@ -65,7 +60,7 @@ export default function LocationAutoComplete() {
     return () => {
       active = false;
     };
-  }, [query, fetch]);
+  }, [query, fetchData]);
 
   return (
     <div className="tw-top-16 tw-w-full">
@@ -79,6 +74,7 @@ export default function LocationAutoComplete() {
               displayValue={(location: string) => location}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search for a location e.x 'New York', '123 Main Street', '71111'"
+              autoComplete="off"
             />
           </div>
           <Transition
