@@ -9,6 +9,7 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react";
+import { useEffect } from "react";
 
 import stylesheet from "~/tailwind.css";
 
@@ -31,6 +32,18 @@ export const loader = async () => {
 };
 
 export default function App() {
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+
+    import("react-scan").then(({ scan }) => {
+      scan({
+        includeChildren: true,
+        log: true,
+        report: true,
+      });
+    });
+  }, []);
+
   const { ENV } = useLoaderData<typeof loader>();
   return (
     <html lang="en" className="h-full">
