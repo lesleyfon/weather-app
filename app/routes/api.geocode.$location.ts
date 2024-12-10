@@ -1,17 +1,19 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node"; // or cloudflare/deno
+import type { ActionFunctionArgs,  LoaderFunctionArgs } from "@remix-run/node"; // or cloudflare/deno
 import  { json } from "@remix-run/node"; // or cloudflare/deno
 
-import { getAutocompletePrediction } from "~/api/weather.api";
+import { getGeocode } from "~/api/weather.api";
+import { ENV_TYPES } from "~/types/location.types";
+
 
 
 export const loader = async ({
   params,
 }: LoaderFunctionArgs) => {
   const location = params.location as string
-
-  const result = await getAutocompletePrediction({
+  console.log({location})
+  const result = await getGeocode({
     input: location,
-    GOOGLE_API_KEY: process.env?.["GOOGLE_API_KEY"] ?? ""
+    GOOGLE_API_KEY: process.env.GOOGLE_API_KEY as ENV_TYPES["GOOGLE_API_KEY"],
   });
 
   return json({
@@ -19,7 +21,6 @@ export const loader = async ({
     location: params.location,
   });
 };
-
 
 
 export const action = async ({
@@ -31,6 +32,7 @@ export const action = async ({
         data: "get resource"
       });
     case "POST":
+      console.log({request})
       return json({
         data: "post resource"
       });
