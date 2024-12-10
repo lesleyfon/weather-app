@@ -1,3 +1,12 @@
+export const DATE_FORMAT="yyyy-MM-dd"
+
+
+export enum QUERY_PARAMS_ENUM {
+  FIRST_DATE = "first-date",
+  SECOND_DATE = "second-date",
+  LONGITUDE = "longitude",
+  LATITUDE = "latitude",
+}
 export interface AddressComponentType {
   long_name: string;
   short_name: string;
