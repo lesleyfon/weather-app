@@ -1,17 +1,10 @@
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
-import { Form, useSearchParams } from "@remix-run/react";
-import { format } from "date-fns";
-import { useState } from "react";
-import { type DayClickEventHandler } from "react-day-picker";
+import { Form } from "@remix-run/react";
 
 import { getGeocode } from "~/api/weather.api";
 import DatePickerComponent from "~/components/datepicker";
 import LocationAutoComplete from "~/components/locationautocomplete";
-import {
-  ENV_TYPES,
-  QUERY_PARAMS_ENUM,
-  DATE_FORMAT,
-} from "~/types/location.types";
+import { ENV_TYPES, QUERY_PARAMS_ENUM, DateType } from "~/types/location.types";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const form = await request.formData();
@@ -55,42 +48,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 function Index() {
-  const [firstDate, setFirstDate] = useState<Date | undefined>(new Date());
-  const [secondDate, setSecondDate] = useState<Date | undefined>(new Date());
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const handleFirstDateSelect: DayClickEventHandler = (date) => {
-    setFirstDate(date);
-    setSearchParams({
-      [QUERY_PARAMS_ENUM.FIRST_DATE]: format(date, DATE_FORMAT),
-      [QUERY_PARAMS_ENUM.SECOND_DATE]:
-        searchParams.get(QUERY_PARAMS_ENUM.SECOND_DATE) ||
-        format(new Date(), DATE_FORMAT),
-    });
-  };
-
-  const handleSecondDateSelect: DayClickEventHandler = (date) => {
-    setSecondDate(date);
-    setSearchParams({
-      [QUERY_PARAMS_ENUM.FIRST_DATE]:
-        searchParams.get(QUERY_PARAMS_ENUM.FIRST_DATE) ||
-        format(new Date(), DATE_FORMAT),
-      [QUERY_PARAMS_ENUM.SECOND_DATE]: format(date, DATE_FORMAT),
-    });
-  };
-
   return (
     <main className="tw-w-1/2 tw-flex tw-justify-center tw-m-auto">
       <Form method="post" className="tw-flex tw-w-full tw-flex-col tw-gap-2">
         <LocationAutoComplete />
-        <DatePickerComponent
-          date={firstDate}
-          handleDaySelect={handleFirstDateSelect}
-        />
-        <DatePickerComponent
-          date={secondDate}
-          handleDaySelect={handleSecondDateSelect}
-        />
+        <DatePickerComponent dateType={DateType.FIRST} />
+        <DatePickerComponent dateType={DateType.SECOND} />
         <button type="submit">Submit</button>
       </Form>
     </main>
