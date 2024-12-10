@@ -1,27 +1,23 @@
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+"use client";
 
-export default function DatePickerComponent({
-  label = "Basic date picker",
-  name,
+import { type DayClickEventHandler } from "react-day-picker";
+
+import { Calendar } from "./ui/calendar";
+
+export default function DatePicker({
+  date,
+  handleDaySelect,
 }: {
-  name: string;
-  label: string;
+  date: Date | undefined;
+  handleDaySelect: DayClickEventHandler;
 }) {
   return (
-    <>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DatePicker
-          label={label}
-          slotProps={{
-            textField: {
-              id: name,
-              name,
-            },
-          }}
-        />
-      </LocalizationProvider>
-    </>
+    <Calendar
+      mode="single"
+      selected={date}
+      className="tw-rounded-md  tw-border"
+      onDayClick={handleDaySelect}
+      disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+    />
   );
 }
