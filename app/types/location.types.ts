@@ -1,6 +1,9 @@
 export const DATE_FORMAT="yyyy-MM-dd"
 
-
+export enum DateType {
+  FIRST = "FIRST",
+  SECOND = "SECOND",
+}
 export enum QUERY_PARAMS_ENUM {
   FIRST_DATE = "first-date",
   SECOND_DATE = "second-date",
