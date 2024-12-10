@@ -1,6 +1,6 @@
-import type {
-  LineGraphReturnedData,
-  WeatherData,
+import {
+  type LineGraphReturnedData,
+  type WeatherData,
 } from "./types/location.types";
 
 export const militaryTimeToStandardTime = (time: string) => {
@@ -63,3 +63,7 @@ export const hourDataKeysToFullWord = {
   cloudcover: ["Cloud Cover", "%"],
   visibility: ["Visibility", " Miles"],
 };
+
+
+export const shouldDisableDate = (date: Date) =>
+  date > new Date() || date < new Date("1900-01-01");
