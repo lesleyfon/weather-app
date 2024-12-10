@@ -8,17 +8,17 @@ import LineGraph from "~/components/linegraph";
 import WeatherCompareTable from "~/components/WeatherCompareTable";
 import data1 from "~/temp-data/data1.json";
 import data2 from "~/temp-data/data2.json";
-import { ENV_TYPES } from "~/types/location.types";
+import { ENV_TYPES, QUERY_PARAMS_ENUM } from "~/types/location.types";
 
 export const loader: LoaderFunction = async ({
   request,
 }: LoaderFunctionArgs) => {
   const url = new URL(request.url).searchParams;
 
-  const firstDate = url.get("firstDate")?.toString() || null;
-  const secondDate = url.get("secondDate")?.toString() || null;
-  const longitude = url.get("longitude")?.toString() || null;
-  const latitude = url.get("latitude")?.toString() || null;
+  const firstDate = url.get(QUERY_PARAMS_ENUM.FIRST_DATE)?.toString() || null;
+  const secondDate = url.get(QUERY_PARAMS_ENUM.SECOND_DATE)?.toString() || null;
+  const longitude = url.get(QUERY_PARAMS_ENUM.LONGITUDE)?.toString() || null;
+  const latitude = url.get(QUERY_PARAMS_ENUM.LATITUDE)?.toString() || null;
 
   if (!longitude || !latitude) {
     return { firstDate: "", secondDate: "" };
