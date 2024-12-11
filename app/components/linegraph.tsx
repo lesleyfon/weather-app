@@ -38,7 +38,7 @@ export default function LineGraph({ data }: { data: WeatherData }) {
             dataKey="temp"
             stroke="#8884d8"
             fill="#e6e9f9"
-            activeDot={{ stroke: "yello", r: 5 }}
+            activeDot={{ stroke: "yellow", r: 5 }}
           />
           <Tooltip content={<CustomizedCursor />} />
         </AreaChart>
