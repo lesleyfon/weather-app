@@ -21,6 +21,27 @@ export const dateStringTo = (date: string) =>
     day: "numeric",
   });
 
+export function formatMmDdYyToDateString(date:string| null){
+  if (!date) return "";
+    return Intl.DateTimeFormat("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    }).format(new Date(date));
+}
+
+export function chartConfig(firstDate:string|null, secondDate:string|null){
+  return {
+    conditionOne: {
+      label: firstDate,
+      color: "hsl(var(--chart-2))",
+    },
+    conditionTwo: {
+      label: secondDate,
+      color: "hsl(var(--chart-1))",
+    },
+  };
+}
 export const celsiusToFahrenheit = (temp: number) => {
   const t = ((temp * 9) / 5 + 32).toFixed(2);
   return t;

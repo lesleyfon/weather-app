@@ -11,7 +11,11 @@ import {
 
 import { cn } from "~/lib/utils";
 import { QUERY_PARAMS_ENUM, WeatherData } from "~/types/location.types";
-import { formatDataToGraph } from "~/utils";
+import {
+  chartConfig,
+  formatDataToGraph,
+  formatMmDdYyToDateString,
+} from "~/utils";
 
 import {
   Card,
@@ -39,18 +43,10 @@ export function StackChart({
   const firstDate = searchParams.get(QUERY_PARAMS_ENUM.FIRST_DATE);
   const secondDate = searchParams.get(QUERY_PARAMS_ENUM.SECOND_DATE);
 
-  const config: ChartConfig = useMemo(() => {
-    return {
-      conditionOne: {
-        label: firstDate,
-        color: "hsl(var(--chart-2))",
-      },
-      conditionTwo: {
-        label: secondDate,
-        color: "hsl(var(--chart-1))",
-      },
-    };
-  }, [firstDate, secondDate]);
+  const config: ChartConfig = useMemo(
+    () => chartConfig(firstDate, secondDate),
+    [firstDate, secondDate],
+  );
 
   const formatData = useMemo(() => {
     const d1 = formatDataToGraph(conditionOne);
@@ -72,14 +68,7 @@ export function StackChart({
     });
   }, [conditionOne, conditionTwo, firstDate, secondDate]);
 
-  const formattedDate = useCallback((date: string | null) => {
-    if (!date) return "";
-    return Intl.DateTimeFormat("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    }).format(new Date(date));
-  }, []);
+  const formattedDate = useCallback(formatMmDdYyToDateString, []);
 
   return (
     <Card className="tw-h-[500px]">
@@ -130,22 +119,21 @@ export function StackChart({
                       secondDate?: string;
                     },
                   ) => {
+                    const { firstDate, secondDate } = payload;
                     return (
                       <div className="tw-flex tw-flex-col tw-gap-2">
                         <div className="tw-flex tw-items-center tw-gap-2">
                           <div
                             className={cn(
                               "tw-h-2 tw-w-2 tw-rounded-[2px]",
-                              `tw-bg-${item.color}-500`,
+                              index === 0 ? "tw-bg-red-500" : "tw-bg-green-500",
                             )}
                           />
                           <p className="tw-text-[10px]">
                             <span className="tw-text-gray-500 tw-dark:tw-text-gray-400">
-                              {index === 0
-                                ? payload.firstDate
-                                : payload.secondDate}
+                              {index === 0 ? firstDate : secondDate}
                             </span>{" "}
-                            <span>{value}&#176;</span>
+                            <span>{value}&#176;F</span>
                           </p>
                         </div>
                       </div>
