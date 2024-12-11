@@ -52,8 +52,10 @@ function Index() {
     <main className="tw-w-1/2 tw-flex tw-justify-center tw-m-auto">
       <Form method="post" className="tw-flex tw-w-full tw-flex-col tw-gap-2">
         <LocationAutoComplete />
-        <DatePickerComponent dateType={DateType.FIRST} />
-        <DatePickerComponent dateType={DateType.SECOND} />
+        <div className="tw-flex tw-justify-between ">
+          <DatePickerComponent dateType={DateType.FIRST} />
+          <DatePickerComponent dateType={DateType.SECOND} />
+        </div>
         <button type="submit">Submit</button>
       </Form>
     </main>

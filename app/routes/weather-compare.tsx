@@ -4,7 +4,7 @@ import { useLoaderData } from "@remix-run/react";
 import "react-json-pretty/themes/monikai.css";
 
 import { getWeatherLocation } from "~/api/weather.api";
-import LineGraph from "~/components/linegraph";
+import { StackChart } from "~/components/stackChart";
 import WeatherCompareTable from "~/components/WeatherCompareTable";
 import data1 from "~/temp-data/data1.json";
 import data2 from "~/temp-data/data2.json";
@@ -50,14 +50,13 @@ export default function RemixLoader() {
   const shouldRender = dataOne && dataTwo;
 
   return (
-    <main className="tw-full tw-flex tw-flex-col tw-justify-center">
+    <main className="tw-full tw-flex tw-flex-col tw-justify-center tw-pt-6">
       <div className="tw-flex tw-w-full tw-justify-center">
         {!shouldRender ? (
           <h1>No data / Incomplete information</h1>
         ) : (
-          <section className=" tw-flex tw-flex-col tw-gap-5">
-            <LineGraph data={dataOne} />
-            <LineGraph data={dataTwo} />
+          <section className=" tw-flex tw-flex-col tw-gap-5 tw-w-[1050px] tw-h-[500px]">
+            <StackChart conditionOne={dataOne} conditionTwo={dataTwo} />
           </section>
         )}
       </div>

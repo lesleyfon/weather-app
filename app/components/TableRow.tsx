@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 
+import { uuids } from "~/temp-data/uuids";
 import { HourWeatherData, TableRowPropType } from "~/types/location.types";
 import { celsiusToFahrenheit } from "~/utils";
 
@@ -10,7 +11,7 @@ export const TableRow = ({
   symbol,
   weatherDataOne,
   weatherDataTwo,
-}: TableRowPropType & { objKey: keyof HourWeatherData }) => {
+}: TableRowPropType & { objKey: keyof HourWeatherData; idx: number }) => {
   const hourTwo = weatherDataTwo.find(
     (h) => (h[objKey] || Number.isFinite(h[objKey])) && h,
   );
@@ -22,7 +23,7 @@ export const TableRow = ({
     return value;
   }, []);
 
-  return weatherDataOne.map((hour) => {
+  return weatherDataOne.map((hour, idx) => {
     const celValOne = getValue(objKey, hour[objKey] as string);
     const cellValTwo = getValue(objKey, hourTwo?.[objKey] as string);
 
@@ -33,12 +34,12 @@ export const TableRow = ({
       "1": `tw-bg-white ${liConditionClasses}`,
     };
     return (
-      <th key={objKey}>
+      <th key={uuids[idx]}>
         <p className=" tw-text-left tw-py-2 tw-h-10" />
         <ul>
           {[celValOne, cellValTwo].map((val, idx) => (
             <ListItem
-              key={val}
+              key={uuids[idx]}
               liClassNames={classnames?.[idx as 0 | 1]}
               liSpanClass={conditionClasses}
               hour={hour}
