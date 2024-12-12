@@ -16,6 +16,17 @@ export interface AddressComponentType {
   types: string[];
 }
 
+
+export interface DateParams {
+  firstDate: string | null;
+  secondDate: string | null;
+}
+
+export interface DefaultDates {
+  defaultFirstDate: Date;
+  defaultSecondDate: Date;
+}
+
 export interface ENV_TYPES {
   GOOGLE_API_KEY: string;
   OPEN_WEATHER_API_KEY: string;
