@@ -1,8 +1,16 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import * as React from "react";
-import { DayPicker } from "react-day-picker";
+import { DayPicker, DropdownProps } from "react-day-picker";
 
 import { buttonVariants } from "~/components/ui/button";
+import { ScrollArea } from "~/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import { cn } from "~/lib/utils";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
@@ -67,6 +75,43 @@ function Calendar({
         ...classNames,
       }}
       components={{
+        Dropdown: ({ value, onChange, children, ...props }: DropdownProps) => {
+          const options = React.Children.toArray(
+            children,
+          ) as React.ReactElement<React.HTMLProps<HTMLOptionElement>>[];
+          const selected = options.find((child) => child.props.value === value);
+          const handleChange = (value: string) => {
+            const changeEvent = {
+              target: { value },
+            } as React.ChangeEvent<HTMLSelectElement>;
+            onChange?.(changeEvent);
+          };
+          return (
+            <Select
+              value={value?.toString()}
+              onValueChange={(value) => {
+                handleChange(value);
+              }}
+              {...props}
+            >
+              <SelectTrigger className="pr-1.5 focus:ring-0">
+                <SelectValue>{selected?.props?.children}</SelectValue>
+              </SelectTrigger>
+              <SelectContent position="popper">
+                <ScrollArea className="h-80">
+                  {options.map((option, id: number) => (
+                    <SelectItem
+                      key={`${option.props.value}-${id}`}
+                      value={option.props.value?.toString() ?? ""}
+                    >
+                      {option.props.children}
+                    </SelectItem>
+                  ))}
+                </ScrollArea>
+              </SelectContent>
+            </Select>
+          );
+        },
         IconLeft: ({ ...props }) => (
           <ChevronLeft className="tw-h-4 tw-w-4" {...props} />
         ),
