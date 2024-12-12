@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "@remix-run/react";
 import { useMemo, useCallback } from "react";
-import { Area, AreaChart, CartesianGrid, Label, XAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, Label, XAxis, YAxis } from "recharts";
 import {
   NameType,
   ValueType,
@@ -51,18 +51,25 @@ export function StackChart({
   const formatData = useMemo(() => {
     const d1 = formatDataToGraph(conditionOne);
     const d2 = formatDataToGraph(conditionTwo);
+    let tempmax = 0;
 
     // Convert d2 into a Map for O(1) lookups
-    const d2Map = new Map(d2.map((item) => [item.name, item.temp]));
+    const d2Map = new Map(
+      d2.map((item) => {
+        tempmax = Math.max(tempmax, Number(item.temp));
+        return [item.name, item.temp];
+      }),
+    );
 
     return d1.map(({ name, temp }) => {
       const timeOfDay = name.split(" ").join(":00 ");
-
+      tempmax = Math.max(tempmax, Number(temp));
       return {
         firstDate,
         secondDate,
         timeOfDay,
         conditionOne: temp,
+        tempmax: tempmax + 10,
         conditionTwo: d2Map.get(name),
       };
     });
@@ -103,6 +110,15 @@ export function StackChart({
             >
               <Label value="Time of Day" offset={-7} position="insideBottom" />
             </XAxis>
+            <YAxis
+              dataKey="tempmax"
+              domain={[0, "dataMax + 10"]}
+              allowDataOverflow={true}
+              label={{
+                value: "Temparature",
+                angle: -90,
+              }}
+            />
             <ChartTooltip
               cursor={false}
               content={
@@ -148,7 +164,6 @@ export function StackChart({
               fill="red"
               fillOpacity={0.4}
               stroke="red"
-              stackId="a"
             />
             <Area
               dataKey="conditionTwo"
@@ -156,7 +171,6 @@ export function StackChart({
               fill="green"
               fillOpacity={0.4}
               stroke="green"
-              stackId="a"
             />
           </AreaChart>
         </ChartContainer>

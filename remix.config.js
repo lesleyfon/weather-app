@@ -50,4 +50,6 @@ module.exports = {
     "d3-transition",
     "d3-zoom",
   ],
+  tailwind: true,
+  postcss: true,
 };
