@@ -73,7 +73,9 @@ function Index() {
             defaultDate={defaultSecondDate}
           />
         </div>
-        <Button type="submit">Submit</Button>
+        <Button type="submit" className="tw-bg-indigo-950 tw-text-white">
+          Submit
+        </Button>
       </Form>
     </main>
   );
