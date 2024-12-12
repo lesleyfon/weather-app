@@ -1,10 +1,13 @@
 import { redirect, type ActionFunctionArgs } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Form, useSearchParams } from "@remix-run/react";
+import { useMemo } from "react";
 
 import { getGeocode } from "~/api/weather.api";
 import DatePickerComponent from "~/components/datepicker";
 import LocationAutoComplete from "~/components/locationautocomplete";
+import { Button } from "~/components/ui/button";
 import { ENV_TYPES, QUERY_PARAMS_ENUM, DateType } from "~/types/location.types";
+import { setURLParamsAsDefaultDate } from "~/utils";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const form = await request.formData();
@@ -46,17 +49,31 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   return redirect("/weather-compare?" + queryParams.toString());
 };
-
 function Index() {
+  const [searchParams] = useSearchParams();
+
+  const firstDate = searchParams.get(QUERY_PARAMS_ENUM.FIRST_DATE);
+  const secondDate = searchParams.get(QUERY_PARAMS_ENUM.SECOND_DATE);
+
+  const { defaultFirstDate, defaultSecondDate } = useMemo(
+    () => setURLParamsAsDefaultDate({ firstDate, secondDate }),
+    [firstDate, secondDate],
+  );
   return (
     <main className="tw-w-1/2 tw-flex tw-justify-center tw-m-auto">
       <Form method="post" className="tw-flex tw-w-full tw-flex-col tw-gap-2">
         <LocationAutoComplete />
         <div className="tw-flex tw-justify-between ">
-          <DatePickerComponent dateType={DateType.FIRST} />
-          <DatePickerComponent dateType={DateType.SECOND} />
+          <DatePickerComponent
+            dateType={DateType.FIRST}
+            defaultDate={defaultFirstDate}
+          />
+          <DatePickerComponent
+            dateType={DateType.SECOND}
+            defaultDate={defaultSecondDate}
+          />
         </div>
-        <button type="submit">Submit</button>
+        <Button type="submit">Submit</Button>
       </Form>
     </main>
   );

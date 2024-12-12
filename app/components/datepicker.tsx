@@ -14,9 +14,15 @@ import { shouldDisableDate } from "~/utils";
 
 import { Calendar } from "./ui/calendar";
 
-export default function DatePicker({ dateType }: { dateType: DateType }) {
+export default function DatePicker({
+  dateType,
+  defaultDate,
+}: {
+  dateType: DateType;
+  defaultDate: Date;
+}) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(defaultDate);
 
   const handleDateSelect = useCallback(
     (dateType: DateType): DayClickEventHandler => {
