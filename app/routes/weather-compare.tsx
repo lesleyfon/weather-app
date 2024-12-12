@@ -1,10 +1,12 @@
 import { LoaderFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 
 import "react-json-pretty/themes/monikai.css";
 
 import { getWeatherLocation } from "~/api/weather.api";
+import { SVG } from "~/components/chartcustomizedcursor";
 import { StackChart } from "~/components/stackChart";
+import { Header } from "~/components/ui/header";
 import WeatherCompareTable from "~/components/WeatherCompareTable";
 import data1 from "~/temp-data/data1.json";
 import data2 from "~/temp-data/data2.json";
@@ -50,26 +52,36 @@ export default function RemixLoader() {
   const shouldRender = dataOne && dataTwo;
 
   return (
-    <main className="tw-full tw-flex tw-flex-col tw-justify-center tw-pt-6">
-      <div className="tw-flex tw-w-full tw-justify-center">
-        {!shouldRender ? (
-          <h1>No data / Incomplete information</h1>
-        ) : (
-          <section className=" tw-flex tw-flex-col tw-gap-5 tw-w-[1050px] tw-h-[500px]">
-            <StackChart conditionOne={dataOne} conditionTwo={dataTwo} />
+    <>
+      <Header
+        heading={
+          <Link to="/" className="tw-flex tw-items-center tw-gap-2">
+            <SVG />
+            <span className="tw-text-indigo-900">Weather Compare</span>
+          </Link>
+        }
+      />
+      <main className="tw-full tw-flex tw-flex-col tw-justify-center tw-pt-6 tw-mt-16">
+        <div className="tw-flex tw-w-full tw-justify-center">
+          {!shouldRender ? (
+            <h1>No data / Incomplete information</h1>
+          ) : (
+            <section className=" tw-flex tw-flex-col tw-gap-5 tw-w-[1050px] tw-h-[500px]">
+              <StackChart conditionOne={dataOne} conditionTwo={dataTwo} />
+            </section>
+          )}
+        </div>
+        {shouldRender ? (
+          <section className="tw-flex tw-justify-center">
+            <WeatherCompareTable
+              firstDatetime={dataOne.days[0].datetime}
+              secondDatetime={dataTwo.days[0].datetime}
+              weatherDataOne={dataOne.days[0].hours}
+              weatherDataTwo={dataTwo.days[0].hours}
+            />
           </section>
-        )}
-      </div>
-      {shouldRender ? (
-        <section className="tw-flex tw-justify-center">
-          <WeatherCompareTable
-            firstDatetime={dataOne.days[0].datetime}
-            secondDatetime={dataTwo.days[0].datetime}
-            weatherDataOne={dataOne.days[0].hours}
-            weatherDataTwo={dataTwo.days[0].hours}
-          />
-        </section>
-      ) : null}
-    </main>
+        ) : null}
+      </main>
+    </>
   );
 }

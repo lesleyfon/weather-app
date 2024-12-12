@@ -11,7 +11,7 @@ export const TableRow = ({
   symbol,
   weatherDataOne,
   weatherDataTwo,
-}: TableRowPropType & { objKey: keyof HourWeatherData; idx: number }) => {
+}: TableRowPropType & { objKey: keyof HourWeatherData }) => {
   const hourTwo = weatherDataTwo.find(
     (h) => (h[objKey] || Number.isFinite(h[objKey])) && h,
   );
