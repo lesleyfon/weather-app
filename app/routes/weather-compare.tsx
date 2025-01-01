@@ -26,23 +26,17 @@ export const loader: LoaderFunction = async ({
     return { firstDate: "", secondDate: "" };
   }
 
-  const weatherParams = {
-    longitude,
-    latitude,
-    WEATHER_VISUAL_CROSSING_API_KEY: process.env
-      .WEATHER_VISUAL_CROSSING_API_KEY as ENV_TYPES["WEATHER_VISUAL_CROSSING_API_KEY"],
-  };
-
-  const [dataOne = data1, dataTwo = data2] = await Promise.all([
-    getWeatherLocation({
-      ...weatherParams,
-      date: firstDate!,
-    }),
-    getWeatherLocation({
-      ...weatherParams,
-      date: secondDate!,
-    }),
-  ]);
+  const [dataOne = data1, dataTwo = data2] = await Promise.all(
+    [firstDate, secondDate].map((date) =>
+      getWeatherLocation({
+        longitude,
+        latitude,
+        WEATHER_VISUAL_CROSSING_API_KEY: process.env
+          .WEATHER_VISUAL_CROSSING_API_KEY as ENV_TYPES["WEATHER_VISUAL_CROSSING_API_KEY"],
+        date: date!,
+      }),
+    ),
+  );
 
   return { dataOne, dataTwo };
 };
