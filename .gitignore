@@ -3,6 +3,9 @@ node_modules
 /build
 /public/build
 .env
+.env.local
+
+package-lock.json
 
 /cypress/screenshots
 /cypress/videos
