@@ -39,7 +39,7 @@ export async function getAutocompletePrediction({
 
     return data;
   } catch (error) {
-    console.log("error", error);
+
     return null;
   }
 }
@@ -63,7 +63,7 @@ export async function getGeocode({
 
     return data;
   } catch (error) {
-    console.error("error", error);
+    return null;
   }
 }
 
@@ -90,10 +90,15 @@ export async function getWeatherLocation({
       requestOptions,
     );
 
-    const data = await response.json();
 
-    return data;
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    }
+    return null;
   } catch (error) {
-    console.log("error", error);
+
+    return null;
   }
 }
+
