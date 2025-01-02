@@ -3,6 +3,7 @@ module.exports = {
   cacheDirectory: "./node_modules/.cache/remix",
   ignoredRouteFiles: ["**/.*", "**/*.test.{ts,tsx}"],
   serverModuleFormat: "cjs",
+  serverPlatform: "node",
   serverDependenciesToBundle: [
     /^remix-utils.*/,
     // If you installed is-ip optional dependency you will need these too
@@ -15,7 +16,7 @@ module.exports = {
     "convert-hrtime",
     "is-regexp",
 
-    //D# deps
+    //D3 deps
     "d3",
     "d3-array",
     "d3-geo",
@@ -49,6 +50,7 @@ module.exports = {
     "d3-timer",
     "d3-transition",
     "d3-zoom",
+    "marked",
   ],
   tailwind: true,
   postcss: true,
