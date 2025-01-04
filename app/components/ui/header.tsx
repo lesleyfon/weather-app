@@ -2,9 +2,15 @@ interface DashboardHeaderProps {
   heading: string | React.ReactNode;
   text?: string;
   children?: React.ReactNode;
+  summarySlot?: React.ReactNode;
 }
 
-export function Header({ heading, text, children }: DashboardHeaderProps) {
+export function Header({
+  heading,
+  text,
+  children,
+  summarySlot,
+}: DashboardHeaderProps) {
   return (
     <header className="tw-flex tw-items-center tw-justify-between tw-px-2 tw-fixed tw-top-0 tw-left-0 tw-right-0 tw-z-10 tw-bg-white tw-shadow-md tw-py-2 tw-mb-4">
       <div className="tw-grid tw-gap-1">
@@ -16,6 +22,7 @@ export function Header({ heading, text, children }: DashboardHeaderProps) {
         ) : null}
       </div>
       {children}
+      {summarySlot ? summarySlot : null}
     </header>
   );
 }
