@@ -1,5 +1,4 @@
-import { LoaderFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { defer } from "@remix-run/node"; // or cloudflare/deno
+import { LoaderFunction, LoaderFunctionArgs, defer } from "@remix-run/node";
 import { Link, useLoaderData, Await } from "@remix-run/react";
 import OpenAI from "openai";
 import { Suspense } from "react";
