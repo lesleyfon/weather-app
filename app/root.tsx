@@ -20,10 +20,6 @@ export const links: LinksFunction = () => [
 
 export const loader = async () => {
   const ENV_CONFIG = {
-    SESSION_SECRET: process.env.SESSION_SECRET,
-    GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
-    WEATHER_VISUAL_CROSSING_API_KEY:
-      process.env.WEATHER_VISUAL_CROSSING_API_KEY,
     NODE_ENV: process.env.NODE_ENV,
   };
 
