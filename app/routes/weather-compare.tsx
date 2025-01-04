@@ -9,12 +9,31 @@ import { getWeatherLocation } from "~/api/weather.api";
 import { SVG } from "~/components/chartcustomizedcursor";
 import { MarkdownComponent } from "~/components/MarkdownComponent";
 import { StackChart } from "~/components/stackChart";
+import { Button } from "~/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
 import { Header } from "~/components/ui/header";
+import { ScrollArea } from "~/components/ui/scroll-area";
 import WeatherCompareTable from "~/components/WeatherCompareTable";
 import { chatgptPrompt } from "~/constants";
 import d1 from "~/temp-data/data1.json";
 import d2 from "~/temp-data/data2.json";
 import { ENV_TYPES, QUERY_PARAMS_ENUM } from "~/types/location.types";
+import { formatMmDdYyToDateString } from "~/utils";
+
+function DialogCompareSummary({ content }: { content: string }) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">View Comparison Summary</Button>
+      </DialogTrigger>
+      <DialogContent className="tw-w-[700px] tw-h-[90vh]">
+        <ScrollArea>
+          <MarkdownComponent content={content} />
+        </ScrollArea>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export const loader: LoaderFunction = async ({
   request,
@@ -60,7 +79,10 @@ export const loader: LoaderFunction = async ({
         messages: [
           {
             role: "user",
-            content: `${chatgptPrompt(firstDate, secondDate)}
+            content: `${chatgptPrompt(
+              formatMmDdYyToDateString(firstDate),
+              formatMmDdYyToDateString(secondDate),
+            )}
         first weather data: ${JSON.stringify(firstWeatherData)}
         second weather data: ${JSON.stringify(secondWeatherData)}`,
           },
@@ -94,27 +116,28 @@ export default function RemixLoader() {
             <span className="tw-text-indigo-900">Weather Compare</span>
           </Link>
         }
+        summarySlot={
+          <aside className="tw-flex tw-justify-center tw-items-center">
+            <Suspense fallback={<Button variant="outline">Loading...</Button>}>
+              <Await
+                resolve={content}
+                errorElement={
+                  <div className="tw-text-sm tw-text-red-400">
+                    Error loading comparison.
+                  </div>
+                }
+              >
+                {(resolvedContent) => {
+                  return resolvedContent ? (
+                    <DialogCompareSummary content={resolvedContent} />
+                  ) : null;
+                }}
+              </Await>
+            </Suspense>
+          </aside>
+        }
       />
       <section className="tw-flex tw-flex-row tw-justify-center tw-items-center tw-mt-16 tw-w-screen">
-        <aside className="tw-flex tw-justify-center tw-items-center tw-mt-16">
-          <Suspense fallback={<div>Loading weather comparison...</div>}>
-            <Await
-              resolve={content}
-              errorElement={
-                <div>Error loading comparison. Check console for details.</div>
-              }
-            >
-              {(resolvedContent) => {
-                return resolvedContent ? (
-                  <MarkdownComponent content={resolvedContent} />
-                ) : (
-                  <div>No content received</div>
-                );
-              }}
-            </Await>
-          </Suspense>
-        </aside>
-
         <main className="tw-full tw-flex tw-flex-col tw-justify-center tw-pt-6 tw-mt-16">
           <div className="tw-flex tw-w-full tw-justify-center">
             {!shouldRender ? (
