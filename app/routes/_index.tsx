@@ -1,5 +1,5 @@
-import { redirect, type ActionFunctionArgs } from "@remix-run/node";
-import { Form, useSearchParams } from "@remix-run/react";
+import { json, redirect, type ActionFunctionArgs } from "@remix-run/node";
+import { Form, useActionData, useSearchParams } from "@remix-run/react";
 import { useMemo } from "react";
 
 import { getGeocode } from "~/api/weather.api";
@@ -23,14 +23,19 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   ) as string;
 
   const queryParams = new URLSearchParams();
-
+  const errors: Record<string, string> = {};
   // TODO Added better error handling. MAYBE prevent form from submitting
   if (!location) {
-    return redirect("/error", { status: 303 });
+    errors.location = "Location is required";
   }
   if (!firstDate || !secondDate) {
-    return redirect("/");
+    errors.date = "Date is required";
   }
+
+  if (Object.keys(errors).length > 0) {
+    return json({ errors }, { status: 400 });
+  }
+
   const response = await getGeocode({
     input: location,
     GOOGLE_API_KEY: process.env.GOOGLE_API_KEY as ENV_TYPES["GOOGLE_API_KEY"],
@@ -50,6 +55,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   return redirect("/weather-compare?" + queryParams.toString());
 };
 function Index() {
+  const actionData = useActionData<typeof action>();
   const [searchParams] = useSearchParams();
 
   const firstDate = searchParams.get(QUERY_PARAMS_ENUM.FIRST_DATE);
@@ -63,6 +69,9 @@ function Index() {
     <main className="tw-w-1/2 tw-flex tw-justify-center tw-m-auto">
       <Form method="post" className="tw-flex tw-w-full tw-flex-col tw-gap-2">
         <LocationAutoComplete />
+        {actionData?.errors?.location ? (
+          <p className="tw-text-red-500">{actionData.errors.location}</p>
+        ) : null}
         <div className="tw-flex tw-justify-between ">
           <DatePickerComponent
             dateType={DateType.FIRST}
@@ -73,6 +82,9 @@ function Index() {
             defaultDate={defaultSecondDate}
           />
         </div>
+        {actionData?.errors?.date ? (
+          <p className="tw-text-red-500">{actionData.errors.date}</p>
+        ) : null}
         <Button type="submit" className="tw-bg-indigo-950 tw-text-white">
           Submit
         </Button>
