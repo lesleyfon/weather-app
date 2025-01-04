@@ -95,11 +95,11 @@ function Calendar({
               }}
               {...props}
             >
-              <SelectTrigger className="pr-1.5 focus:ring-0">
+              <SelectTrigger className="tw-pr-1.5 focus:tw-ring-0">
                 <SelectValue>{selected?.props?.children}</SelectValue>
               </SelectTrigger>
               <SelectContent position="popper">
-                <ScrollArea className="h-80">
+                <ScrollArea className="tw-h-80">
                   {options.map((option, id: number) => (
                     <SelectItem
                       key={`${option.props.value}-${id}`}
