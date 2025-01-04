@@ -66,13 +66,16 @@ function Index() {
     [firstDate, secondDate],
   );
   return (
-    <main className="tw-w-1/2 tw-flex tw-justify-center tw-m-auto">
-      <Form method="post" className="tw-flex tw-w-full tw-flex-col tw-gap-2">
+    <main className="tw-w-1/2 tw-flex tw-justify-center tw-m-auto tw-items-center tw-h-screen">
+      <Form
+        method="post"
+        className="tw-flex tw-flex-col tw-gap-2 tw-justify-center tw-items-center"
+      >
         <LocationAutoComplete />
         {actionData?.errors?.location ? (
           <p className="tw-text-red-500">{actionData.errors.location}</p>
         ) : null}
-        <div className="tw-flex tw-justify-between ">
+        <div className="tw-flex tw-justify-between tw-w-[500px] tw-gap-2">
           <DatePickerComponent
             dateType={DateType.FIRST}
             defaultDate={defaultFirstDate}
@@ -85,8 +88,11 @@ function Index() {
         {actionData?.errors?.date ? (
           <p className="tw-text-red-500">{actionData.errors.date}</p>
         ) : null}
-        <Button type="submit" className="tw-bg-indigo-950 tw-text-white">
-          Submit
+        <Button
+          type="submit"
+          className="tw-bg-indigo-950 tw-text-white tw-w-[500px]"
+        >
+          Compare Weather between two dates
         </Button>
       </Form>
     </main>

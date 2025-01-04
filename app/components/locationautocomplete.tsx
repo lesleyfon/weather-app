@@ -63,7 +63,7 @@ export default function LocationAutoComplete() {
   }, [query, fetchData]);
 
   return (
-    <div className="tw-top-16 tw-w-full">
+    <div className="tw-top-16 tw-w-[500px]">
       <Combobox value={selected} onChange={setSelected}>
         <div className="tw-relative tw-mt-1">
           <div className="tw-focus:tw-outline-none tw-focus-visible:tw-ring-2 tw-focus-visible:tw-ring-white/75 tw-focus-visible:tw-ring-offset-2 tw-focus-visible:tw-ring-offset-teal-300 tw-sm:text-sm tw-relative tw-w-full tw-cursor-default tw-overflow-hidden tw-rounded-lg tw-bg-white tw-text-left tw-shadow-md ">
