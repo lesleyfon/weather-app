@@ -1,6 +1,8 @@
 import { LoaderFunction, LoaderFunctionArgs } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { defer } from "@remix-run/node"; // or cloudflare/deno
+import { Link, useLoaderData, Await } from "@remix-run/react";
 import OpenAI from "openai";
+import { Suspense } from "react";
 
 import "react-json-pretty/themes/monikai.css";
 
@@ -46,27 +48,37 @@ export const loader: LoaderFunction = async ({
       ),
     );
 
-    const client = new OpenAI({
-      apiKey: process.env["OPENAI_API_KEY"],
-    });
     const firstWeatherData = dataOne ?? d1;
     const secondWeatherData = dataTwo ?? d2;
 
-    const content = `
-    ${chatgptPrompt(firstDate, secondDate)}
-    first weather data: ${JSON.stringify(firstWeatherData)}
-    second weather data: ${JSON.stringify(secondWeatherData)}
-  `;
-
-    const response = await client.chat.completions.create({
-      model: "gpt-4o",
-      messages: [{ role: "user", content }],
+    const openAiPromise = new OpenAI({
+      apiKey: process.env["OPENAI_API_KEY"],
     });
 
-    const summary = response.choices[0].message.content;
-    return { dataOne: d1, dataTwo: d2, content: summary };
+    const response = openAiPromise.chat.completions
+      .create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "user",
+            content: `${chatgptPrompt(firstDate, secondDate)}
+        first weather data: ${JSON.stringify(firstWeatherData)}
+        second weather data: ${JSON.stringify(secondWeatherData)}`,
+          },
+        ],
+      })
+      .then((response) => {
+        return response.choices[0].message.content;
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error("Error fetching OpenAI response:", error);
+        return null;
+      });
+
+    return defer({ dataOne: d1, dataTwo: d2, content: response });
   } catch (error) {
-    return { dataOne: d1, dataTwo: d2, content: "" };
+    return defer({ dataOne: d1, dataTwo: d2, content: "" });
   }
 };
 
@@ -86,9 +98,24 @@ export default function RemixLoader() {
       />
       <section className="tw-flex tw-flex-row tw-justify-center tw-items-center tw-mt-16 tw-w-screen">
         <aside className="tw-flex tw-justify-center tw-items-center tw-mt-16">
-          {/* TODO: Render this in a dialog */}
-          <MarkdownComponent content={content} />
+          <Suspense fallback={<div>Loading weather comparison...</div>}>
+            <Await
+              resolve={content}
+              errorElement={
+                <div>Error loading comparison. Check console for details.</div>
+              }
+            >
+              {(resolvedContent) => {
+                return resolvedContent ? (
+                  <MarkdownComponent content={resolvedContent} />
+                ) : (
+                  <div>No content received</div>
+                );
+              }}
+            </Await>
+          </Suspense>
         </aside>
+
         <main className="tw-full tw-flex tw-flex-col tw-justify-center tw-pt-6 tw-mt-16">
           <div className="tw-flex tw-w-full tw-justify-center">
             {!shouldRender ? (
