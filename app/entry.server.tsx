@@ -12,7 +12,7 @@ import { RemixServer } from "@remix-run/react";
 import isbot from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 
-const ABORT_DELAY = 5_000;
+const ABORT_DELAY = 10_000;
 
 export default function handleRequest(
   request: Request,
@@ -68,6 +68,7 @@ function handleBotRequest(
         },
         onError(error: unknown) {
           responseStatusCode = 500;
+          // eslint-disable-next-line no-console
           console.error(error);
         },
       },
@@ -109,6 +110,7 @@ function handleBrowserRequest(
           reject(error);
         },
         onError(error: unknown) {
+          // eslint-disable-next-line no-console
           console.error(error);
           responseStatusCode = 500;
         },
