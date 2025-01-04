@@ -107,6 +107,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Contact 📧
 Project Link: [https://github.com/lesleyfon/weather-app](https://github.com/lesleyfon/weather-app)
+Deployed on [https://tempswap.vercel.app/](https://tempswap.vercel.app/)
 
 
 ---
