@@ -24,6 +24,7 @@ export const loader = async () => {
     GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
     WEATHER_VISUAL_CROSSING_API_KEY:
       process.env.WEATHER_VISUAL_CROSSING_API_KEY,
+    NODE_ENV: process.env.NODE_ENV,
   };
 
   return json({
@@ -32,8 +33,12 @@ export const loader = async () => {
 };
 
 export default function App() {
+  const { ENV } = useLoaderData<typeof loader>();
+
   useEffect(() => {
-    if (typeof document === "undefined") return;
+    // Do not scan on production or server side
+    if (typeof document === "undefined" || ENV.NODE_ENV === "production")
+      return;
 
     import("react-scan").then(({ scan }) => {
       scan({
@@ -44,7 +49,6 @@ export default function App() {
     });
   }, []);
 
-  const { ENV } = useLoaderData<typeof loader>();
   return (
     <html lang="en" className="h-full">
       <head>
