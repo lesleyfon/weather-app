@@ -247,3 +247,30 @@ export interface TableDataListItemPropType {
   liSpanClass?: string;
   liParagraphClassNames?: string;
 }
+
+
+export interface ChatCompletionResponse {
+  id: string;
+  object: string;
+  created: number;
+  model: string;
+  usage: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+    completion_tokens_details: {
+      reasoning_tokens: number;
+      accepted_prediction_tokens: number;
+      rejected_prediction_tokens: number;
+    };
+  };
+  choices: Array<{
+    message: {
+      role: string;
+      content: string;
+    };
+    logprobs: null | any; // Assuming logprobs can be null or any type, depending on the API response
+    finish_reason: string;
+    index: number;
+  }>;
+}

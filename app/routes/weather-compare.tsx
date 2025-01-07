@@ -17,7 +17,11 @@ import WeatherCompareTable from "~/components/WeatherCompareTable";
 import { chatgptPrompt } from "~/constants";
 import d1 from "~/temp-data/data1.json";
 import d2 from "~/temp-data/data2.json";
-import { ENV_TYPES, QUERY_PARAMS_ENUM } from "~/types/location.types";
+import {
+  ChatCompletionResponse,
+  ENV_TYPES,
+  QUERY_PARAMS_ENUM,
+} from "~/types/location.types";
 import { formatMmDdYyToDateString } from "~/utils";
 
 function DialogCompareSummary({ content }: { content: string }) {
@@ -88,10 +92,10 @@ export const loader: LoaderFunction = async ({
           },
         ],
       })
-      .then((response) => {
-        return response.choices[0].message.content;
+      .then((response): string => {
+        return response.choices[0].message.content as string;
       })
-      .catch((error) => {
+      .catch((error: unknown) => {
         // eslint-disable-next-line no-console
         console.error("Error fetching OpenAI response:", error);
         return null;
