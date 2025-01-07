@@ -13,6 +13,10 @@ import {
 import { shouldDisableDate } from "~/utils";
 
 import { Calendar } from "./ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "~/lib/utils";
+import { Button } from "./ui/button";
 
 export default function DatePicker({
   dateType,
@@ -57,12 +61,30 @@ export default function DatePicker({
     [searchParams, setSearchParams],
   );
   return (
-    <Calendar
-      mode="single"
-      selected={date}
-      className="tw-rounded-md  tw-border"
-      onDayClick={handleDateSelect(dateType)}
-      disabled={shouldDisableDate}
-    />
+    <>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant={"outline"}
+            className={cn(
+              "tw-pl-3 tw-text-left tw-font-normal tw-h-[52px] tw-w-full",
+              !date && "tw-text-muted-foreground",
+            )}
+          >
+            {date ? format(date, "PPP") : <span>Pick a date</span>}
+            <CalendarIcon className="tw-ml-auto tw-h-4 tw-w-4 tw-opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="tw-w-auto tw-p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={date}
+            className="tw-rounded-md  tw-border"
+            onDayClick={handleDateSelect(dateType)}
+            disabled={shouldDisableDate}
+          />
+        </PopoverContent>
+      </Popover>
+    </>
   );
 }

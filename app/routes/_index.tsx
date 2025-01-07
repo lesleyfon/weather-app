@@ -54,6 +54,35 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   return redirect("/weather-compare?" + queryParams.toString());
 };
+
+function FormError({
+  errors,
+}: {
+  errors?: { location?: string; date?: string };
+}) {
+  if (errors && errors.location && errors.date) {
+    return (
+      <p className="tw-text-left tw-w-full tw-text-red-500">
+        You are missing both Location and Date. Please Ensure you Include a
+        location and a Date
+      </p>
+    );
+  }
+
+  if (errors && errors.date) {
+    return (
+      <p className="tw-text-left tw-w-full tw-text-red-500">{errors.date}</p>
+    );
+  }
+  if (errors && errors.location) {
+    return (
+      <p className="tw-text-left tw-w-full tw-text-red-500">
+        {errors.location}
+      </p>
+    );
+  }
+  return null;
+}
 function Index() {
   const actionData = useActionData<typeof action>();
   const [searchParams] = useSearchParams();
@@ -65,36 +94,31 @@ function Index() {
     () => setURLParamsAsDefaultDate({ firstDate, secondDate }),
     [firstDate, secondDate],
   );
+
   return (
-    <main className="tw-w-1/2 tw-flex tw-justify-center tw-m-auto tw-items-center tw-h-screen">
+    <main className="tw-container tw-flex tw-flex-col tw-mt-7 md:tw-mt-36  tw-m-auto tw-items-center tw-h-screen tw-max-w-6xl tw-w-full">
       <Form
         method="post"
-        className="tw-flex tw-flex-col tw-gap-2 tw-justify-center tw-items-center"
+        className="tw-grid tw-grid-rows-[repeat(4_1fr)] tw-grid-cols-[repeat(1,100%)]  md:tw-grid-rows-[1] md:tw-grid-cols-[1fr_1fr_1fr_82px] tw-gap-2 tw-justify-center tw-items-center tw-w-full tw-px-4"
       >
         <LocationAutoComplete />
-        {actionData?.errors?.location ? (
-          <p className="tw-text-red-500">{actionData.errors.location}</p>
-        ) : null}
-        <div className="tw-flex tw-justify-between tw-w-[500px] tw-gap-2">
-          <DatePickerComponent
-            dateType={DateType.FIRST}
-            defaultDate={defaultFirstDate}
-          />
-          <DatePickerComponent
-            dateType={DateType.SECOND}
-            defaultDate={defaultSecondDate}
-          />
-        </div>
-        {actionData?.errors?.date ? (
-          <p className="tw-text-red-500">{actionData.errors.date}</p>
-        ) : null}
+
+        <DatePickerComponent
+          dateType={DateType.FIRST}
+          defaultDate={defaultFirstDate}
+        />
+        <DatePickerComponent
+          dateType={DateType.SECOND}
+          defaultDate={defaultSecondDate}
+        />
         <Button
           type="submit"
-          className="tw-bg-indigo-950 tw-text-white tw-w-[500px]"
+          className="tw-bg-indigo-950 tw-text-white tw-h-[52px]"
         >
-          Compare Weather between two dates
+          Submit
         </Button>
       </Form>
+      {actionData?.errors ? <FormError errors={actionData.errors} /> : null}
     </main>
   );
 }

@@ -63,17 +63,17 @@ export default function LocationAutoComplete() {
   }, [query, fetchData]);
 
   return (
-    <div className="tw-top-16 tw-w-[500px]">
+    <div className="tw-top-16">
       <Combobox value={selected} onChange={setSelected}>
-        <div className="tw-relative tw-mt-1">
-          <div className="tw-focus:tw-outline-none tw-focus-visible:tw-ring-2 tw-focus-visible:tw-ring-white/75 tw-focus-visible:tw-ring-offset-2 tw-focus-visible:tw-ring-offset-teal-300 tw-sm:text-sm tw-relative tw-w-full tw-cursor-default tw-overflow-hidden tw-rounded-lg tw-bg-white tw-text-left tw-shadow-md ">
+        <div className="tw-relative tw-mt-1 tw-border-1">
+          <div className="tw-focus:tw-outline-none tw-focus-visible:tw-ring-2 tw-focus-visible:tw-ring-white/75 tw-focus-visible:tw-ring-offset-2 tw-focus-visible:tw-ring-offset-teal-300 tw-sm:text-sm tw-relative tw-w-full tw-cursor-default tw-overflow-hidden tw-rounded-lg tw-bg-white tw-text-left tw-border tw-border-gray-200">
             <Combobox.Input
-              className="tw-focus:tw-ring-0 tw-w-full tw-border-none tw-py-4 tw-px-3 tw-text-sm tw-leading-5 tw-text-gray-900"
+              className="tw-outline-none tw-w-full tw-border-none tw-py-4 tw-px-3 tw-text-base tw-leading-5 tw-text-gray-900"
               id="location"
               name="location"
               displayValue={(location: string) => location}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search for a location e.x 'New York', '123 Main Street', '71111'"
+              placeholder="Search... e.x 'New York', '123 Main Street', '71111'"
               autoComplete="off"
             />
           </div>
