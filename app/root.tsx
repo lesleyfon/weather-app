@@ -53,7 +53,9 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="tw-h-full">
+      <body
+        className={`tw-h-full tw-bg-gradient-to-r tw-from-indigo-300 tw-to-indigo-400`}
+      >
         <Outlet />
         <ScrollRestoration />
         <script
