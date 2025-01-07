@@ -97,7 +97,11 @@ export const loader: LoaderFunction = async ({
         return null;
       });
 
-    return defer({ dataOne: d1, dataTwo: d2, content: response });
+    return defer({
+      dataOne: firstWeatherData,
+      dataTwo: secondWeatherData,
+      content: response,
+    });
   } catch (error) {
     return defer({ dataOne: d1, dataTwo: d2, content: "" });
   }

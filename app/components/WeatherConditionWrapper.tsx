@@ -7,6 +7,7 @@ import {
 } from "~/assets/svg/";
 
 const WeatherConditionSVG = ({ condition }: { condition: string }) => {
+  // TODO: Add animations for each condition
   if (condition.includes("rain")) {
     return <WeatherRainSVG />;
   }
