@@ -119,3 +119,63 @@ export const hourDataKeysToFullWord = {
 
 export const shouldDisableDate = (date: Date) =>
   date > new Date() || date < new Date("1900-01-01");
+
+export interface WeatherTheme {
+  primary: string;
+  text: string;
+}
+export enum WeatherCondition {
+  SUNNY = "sunny",
+  RAINY = "rainy",
+  CLOUDY = "cloudy",
+  MORNING = "morning",
+  AFTERNOON = "afternoon",
+  EVENING = "evening",
+  NIGHT = "night",
+}
+
+
+export const timeOfDate = (date: Date): WeatherCondition => {
+  const hours = date.getHours();
+  if (hours < 12) return WeatherCondition.MORNING;
+  if (hours < 18) return WeatherCondition.AFTERNOON;
+  if (hours < 21) return WeatherCondition.EVENING;
+  return WeatherCondition.NIGHT;
+};
+
+
+
+export const getWeatherTheme = (condition: WeatherCondition): WeatherTheme => {
+  const themes: Record<string, WeatherTheme> = {
+    sunny: {
+      primary: "tw-bg-gradient-to-r tw-from-yellow-400 tw-to-orange-500",
+      text: "tw-text-gray-900",
+    },
+    rainy: {
+      primary: "tw-bg-gradient-to-r tw-from-blue-400 tw-to-blue-600",
+      text: "tw-text-white",
+    },
+    cloudy: {
+      primary: "tw-bg-gradient-to-r tw-from-gray-300 tw-to-gray-400",
+      text: "tw-text-gray-900",
+    },
+    morning: {
+      primary: "tw-bg-gradient-to-r tw-from-yellow-400 tw-to-orange-500",
+      text: "tw-text-gray-900",
+    },
+    afternoon: {
+      primary: "tw-bg-gradient-to-r tw-from-yellow-400 tw-to-orange-500",
+      text: "tw-text-gray-900",
+    },
+    evening: {
+      primary: "tw-bg-gradient-to-r tw-from-indigo-300 tw-to-indigo-400",
+      text: "tw-text-gray-900",
+    },
+    night: {
+      primary: "tw-bg-gradient-to-r tw-from-indigo-300 tw-to-indigo-400",
+      text: "tw-text-gray-900",
+    },
+  };
+
+  return themes[condition] || themes.sunny;
+};
