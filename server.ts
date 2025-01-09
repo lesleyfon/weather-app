@@ -10,12 +10,22 @@ import chokidar from "chokidar";
 import compression from "compression";
 import type { RequestHandler } from "express";
 import express from "express";
+import { rateLimit } from 'express-rate-limit'
 import morgan from "morgan";
 import sourceMapSupport from "source-map-support";
 
 sourceMapSupport.install();
 installGlobals();
 run();
+
+const limiter = rateLimit({
+	windowMs: 1 * 60 * 1000, // 5 minutes
+	limit: 200, 
+	standardHeaders: 'draft-8', 
+	legacyHeaders: false, 
+  message: "Too many requests from this IP, please try again after 5 minutes",
+})
+
 
 async function run() {
   const BUILD_PATH = path.resolve("build/index.js");
@@ -24,6 +34,7 @@ async function run() {
 
   const app = express();
   const metricsApp = express();
+  app.use(limiter)
   app.use(
     prom({
       metricsPath: "/metrics",
