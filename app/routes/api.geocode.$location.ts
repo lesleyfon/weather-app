@@ -10,7 +10,7 @@ export const loader = async ({
   params,
 }: LoaderFunctionArgs) => {
   const location = params.location as string
-  console.log({location})
+
   const result = await getGeocode({
     input: location,
     GOOGLE_API_KEY: process.env.GOOGLE_API_KEY as ENV_TYPES["GOOGLE_API_KEY"],
@@ -32,7 +32,7 @@ export const action = async ({
         data: "get resource"
       });
     case "POST":
-      console.log({request})
+
       return json({
         data: "post resource"
       });
