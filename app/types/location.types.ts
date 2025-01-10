@@ -31,6 +31,7 @@ export interface ENV_TYPES {
   GOOGLE_API_KEY: string;
   OPEN_WEATHER_API_KEY: string;
   WEATHER_VISUAL_CROSSING_API_KEY: string;
+  POSTHOG_API_KEY: string
 }
 export interface GeometryBoundsType {
   northeast: {

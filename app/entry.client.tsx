@@ -13,7 +13,7 @@ function PosthogInit() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const API_KEY = window.ENV.POSTHOG_API_KEY as string;
-    console.log("API_KEY", API_KEY);
+
     if (API_KEY) {
       posthog.init(API_KEY, {
         api_host: "https://us.i.posthog.com",
