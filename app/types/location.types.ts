@@ -265,13 +265,13 @@ export interface ChatCompletionResponse {
       rejected_prediction_tokens: number;
     };
   };
-  choices: Array<{
+  choices: {
     message: {
       role: string;
       content: string;
     };
-    logprobs: null | any; // Assuming logprobs can be null or any type, depending on the API response
+    logprobs: null | unknown;
     finish_reason: string;
     index: number;
-  }>;
+  }[];
 }
