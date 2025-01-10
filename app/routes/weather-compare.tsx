@@ -88,10 +88,10 @@ export const loader: LoaderFunction = async ({
           },
         ],
       })
-      .then((response) => {
-        return response.choices[0].message.content;
+      .then((response): string => {
+        return response.choices[0].message.content as string;
       })
-      .catch((error) => {
+      .catch((error: unknown) => {
         // eslint-disable-next-line no-console
         console.error("Error fetching OpenAI response:", error);
         return null;

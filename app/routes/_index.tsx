@@ -1,5 +1,6 @@
 import { json, redirect, type ActionFunctionArgs } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
+import posthog from "posthog-js";
 import { useMemo } from "react";
 
 import { getGeocode } from "~/api/weather.api";
@@ -133,6 +134,9 @@ function Index() {
           <Button
             type="submit"
             className="tw-bg-indigo-950 tw-text-white tw-h-[52px]"
+            onClick={() => {
+              posthog.capture("button_clicked");
+            }}
           >
             Submit
           </Button>

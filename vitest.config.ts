@@ -2,8 +2,13 @@
 /// <reference types="vite/client" />
 
 import react from "@vitejs/plugin-react";
+import { unstable_vitePlugin as remix } from "@remix-run/dev";
+
+import { loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
+
+
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],

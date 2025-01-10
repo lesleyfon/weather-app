@@ -2,9 +2,11 @@
 
 import { useSearchParams } from "@remix-run/react";
 import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 import { type DayClickEventHandler } from "react-day-picker";
 
+import { cn } from "~/lib/utils";
 import {
   DATE_FORMAT,
   DateType,
@@ -12,11 +14,9 @@ import {
 } from "~/types/location.types";
 import { shouldDisableDate } from "~/utils";
 
+import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { cn } from "~/lib/utils";
-import { Button } from "./ui/button";
 
 export default function DatePicker({
   dateType,

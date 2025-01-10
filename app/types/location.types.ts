@@ -31,6 +31,7 @@ export interface ENV_TYPES {
   GOOGLE_API_KEY: string;
   OPEN_WEATHER_API_KEY: string;
   WEATHER_VISUAL_CROSSING_API_KEY: string;
+  POSTHOG_API_KEY: string
 }
 export interface GeometryBoundsType {
   northeast: {
@@ -246,4 +247,31 @@ export interface TableDataListItemPropType {
   symbol?: string;
   liSpanClass?: string;
   liParagraphClassNames?: string;
+}
+
+
+export interface ChatCompletionResponse {
+  id: string;
+  object: string;
+  created: number;
+  model: string;
+  usage: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+    completion_tokens_details: {
+      reasoning_tokens: number;
+      accepted_prediction_tokens: number;
+      rejected_prediction_tokens: number;
+    };
+  };
+  choices: {
+    message: {
+      role: string;
+      content: string;
+    };
+    logprobs: null | unknown;
+    finish_reason: string;
+    index: number;
+  }[];
 }
