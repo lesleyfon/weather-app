@@ -17,11 +17,7 @@ import WeatherCompareTable from "~/components/WeatherCompareTable";
 import { chatgptPrompt } from "~/constants";
 import d1 from "~/temp-data/data1.json";
 import d2 from "~/temp-data/data2.json";
-import {
-  ChatCompletionResponse,
-  ENV_TYPES,
-  QUERY_PARAMS_ENUM,
-} from "~/types/location.types";
+import { ENV_TYPES, QUERY_PARAMS_ENUM } from "~/types/location.types";
 import { formatMmDdYyToDateString } from "~/utils";
 
 function DialogCompareSummary({ content }: { content: string }) {
