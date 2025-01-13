@@ -1,7 +1,12 @@
-import { LoaderFunction, LoaderFunctionArgs, defer } from "@remix-run/node";
+import {
+  LoaderFunction,
+  LoaderFunctionArgs,
+  defer,
+  MetaFunction,
+} from "@remix-run/node";
 import { Link, useLoaderData, Await } from "@remix-run/react";
 import OpenAI from "openai";
-import { Suspense, useMemo } from "react";
+import { Suspense, useMemo, memo } from "react";
 
 import "react-json-pretty/themes/monikai.css";
 
@@ -109,6 +114,19 @@ export const loader: LoaderFunction = async ({
   }
 };
 
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Weather Comparison Tool" },
+    {
+      name: "description",
+      content: "Compare weather conditions between two dates",
+    },
+  ];
+};
+
+const MemoizedWeatherCompareTable = memo(WeatherCompareTable);
+const MemoizedCollapsibleCompareTable = memo(CollapsibleCompareTable);
+
 export default function RemixLoader() {
   const { dataOne, dataTwo, content } = useLoaderData<typeof loader>();
   const shouldRender = dataOne && dataTwo;
@@ -176,7 +194,7 @@ export default function RemixLoader() {
                   {MemoizedTabListTrigger}
                 </TabsList>
                 <TabsContent value="Alt View One">
-                  <WeatherCompareTable
+                  <MemoizedWeatherCompareTable
                     firstDatetime={dataOne.days[0].datetime}
                     secondDatetime={dataTwo.days[0].datetime}
                     weatherDataOne={dataOne.days[0].hours}
@@ -184,7 +202,7 @@ export default function RemixLoader() {
                   />
                 </TabsContent>
                 <TabsContent value="Alt View Two" className="tw-w-full">
-                  <CollapsibleCompareTable
+                  <MemoizedCollapsibleCompareTable
                     firstDatetime={dataOne.days[0].datetime}
                     secondDatetime={dataTwo.days[0].datetime}
                     weatherDataOne={dataOne.days[0].hours}

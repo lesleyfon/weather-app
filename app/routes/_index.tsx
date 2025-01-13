@@ -1,4 +1,9 @@
-import { json, redirect, type ActionFunctionArgs } from "@remix-run/node";
+import {
+  json,
+  redirect,
+  type ActionFunctionArgs,
+  MetaFunction,
+} from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import posthog from "posthog-js";
 import { useMemo } from "react";
@@ -88,6 +93,17 @@ function FormError({
   }
   return null;
 }
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Weather Comparison Tool" },
+    {
+      name: "description",
+      content: "Compare weather conditions between two dates",
+    },
+  ];
+};
+
 function Index() {
   const actionData = useActionData<typeof action>();
   const [searchParams] = useSearchParams();
