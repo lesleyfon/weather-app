@@ -1,5 +1,5 @@
 import { SquareChevronDown } from "lucide-react";
-import { memo, useMemo } from "react";
+import { memo } from "react";
 
 import { nonMinMaxWeatherKeys, weatherConditionsToIconMap } from "~/constants";
 import {
@@ -19,30 +19,41 @@ import {
 
 type WeatherIconKeys = keyof typeof weatherConditionsToIconMap;
 
-const WeatherStatistics = memo(function ({
+const WeatherMetricsOverview = memo(function ({
   data,
   dataKey,
   sign,
 }: {
   data: HourWeatherData[];
-  dataKey: string;
+  dataKey: keyof HourWeatherData;
   sign: string;
 }) {
+  if (!data?.length) {
+    return <p>No data available</p>;
+  }
+
   const titles = data.reduce(
     (acc: Record<string, { max?: number; min?: number } | string>, curr) => {
-      Object.entries(curr).forEach(([key, value]) => {
-        if (!nonMinMaxWeatherKeys.has(key)) {
-          if (key in acc && typeof acc === "object" && acc[key]) {
-            const item = acc[key] as { max: number; min?: number };
-            item.max = Math.max(item.max, Number(value));
-            item.min = Math.min(item.max, Number(value));
+      Object.entries(curr).forEach(
+        ([key, value]: [string, string | number]) => {
+          const numRegex = /^-?\d+(\.\d+)?$/;
+          if (
+            !nonMinMaxWeatherKeys.has(key) &&
+            numRegex.test(value as string)
+          ) {
+            const numValue = Number(value);
+            if (key in acc && typeof acc === "object" && acc[key]) {
+              const item = acc[key] as { max: number; min?: number };
+              item.max = Math.max(item.max, numValue);
+              item.min = Math.min(item.min ?? numValue, numValue);
+            } else {
+              acc[key] = { max: numValue, min: numValue };
+            }
           } else {
-            acc[key] = { max: Number(value), min: Number(value) };
+            acc[key] = value as string;
           }
-        } else {
-          acc[key] = value;
-        }
-      });
+        },
+      );
       return acc;
     },
     {},
@@ -71,8 +82,88 @@ const WeatherStatistics = memo(function ({
     </div>
   );
 });
+WeatherMetricsOverview.displayName = "Weather Statistics";
 
-WeatherStatistics.displayName = "Weather Statistics";
+const TableCellContent = memo(
+  ({
+    Icon,
+    titleList,
+    weatherData,
+    dataKey,
+  }: {
+    Icon: React.ComponentType | null;
+    titleList: string[];
+    weatherData: HourWeatherData[];
+    dataKey: keyof HourWeatherData;
+  }) => (
+    <>
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role */}
+      <p className="tw-flex tw-gap-4" role="button" aria-expanded="false">
+        {Icon ? <Icon aria-hidden="true" /> : null}
+        <strong>{titleList[0]}</strong>
+        <SquareChevronDown aria-hidden="true" />
+      </p>
+      <WeatherMetricsOverview
+        data={weatherData}
+        dataKey={dataKey}
+        sign={titleList[1]}
+      />
+    </>
+  ),
+);
+TableCellContent.displayName = "TableCellContent";
+
+const WeatherTableRow = memo(
+  ({
+    weatherDataOne,
+    weatherDataTwo,
+  }: Pick<WeatherCompareTableProps, "weatherDataOne" | "weatherDataTwo">) => (
+    <>
+      {Object.entries(hourDataKeysToFullWord).map(([key, titleList]) => {
+        const Icon =
+          key in weatherConditionsToIconMap && (key as WeatherIconKeys)
+            ? weatherConditionsToIconMap[key as WeatherIconKeys]
+            : null;
+        return (
+          <TableRow
+            key={key}
+            className="tw-text-indigo-100 hover:tw-bg-indigo-900/50 tw-transition tw-duration-500 tw-ease-in-out"
+          >
+            {[weatherDataOne, weatherDataTwo].map((weatherData) => (
+              <TableCell key={key}>
+                <TableCellContent
+                  Icon={Icon}
+                  titleList={titleList}
+                  weatherData={weatherData}
+                  dataKey={key as keyof HourWeatherData}
+                />
+              </TableCell>
+            ))}
+          </TableRow>
+        );
+      })}
+    </>
+  ),
+);
+WeatherTableRow.displayName = "WeatherTableRow";
+
+const TableHeaderRow = memo(
+  ({
+    firstDatetime,
+    secondDatetime,
+  }: Pick<WeatherCompareTableProps, "firstDatetime" | "secondDatetime">) => (
+    <TableRow>
+      <TableHead className="tw-text-indigo-100 tw-text-2xl tw-font-extrabold">
+        <p className="tw-py-3">{formatMmDdYyToDateString(firstDatetime)}</p>
+      </TableHead>
+      <TableHead className="tw-text-indigo-100 tw-text-2xl tw-font-extrabold">
+        <p className="tw-py-3">{formatMmDdYyToDateString(secondDatetime)}</p>
+      </TableHead>
+    </TableRow>
+  ),
+);
+
+TableHeaderRow.displayName = "TableHeaderRow";
 
 export default function CollapsibleCompareTable({
   weatherDataOne,
@@ -80,61 +171,20 @@ export default function CollapsibleCompareTable({
   firstDatetime,
   secondDatetime,
 }: WeatherCompareTableProps) {
-  const weatherTableRow = useMemo(() => {
-    return Object.entries(hourDataKeysToFullWord).map(([key, titleList]) => {
-      const Icon =
-        key in weatherConditionsToIconMap && (key as WeatherIconKeys)
-          ? weatherConditionsToIconMap[key as WeatherIconKeys]
-          : null;
-      return (
-        <TableRow
-          key={key}
-          className="tw-text-indigo-100 hover:tw-bg-indigo-900/50 tw-transition tw-duration-500 tw-ease-in-out"
-        >
-          <TableCell>
-            <p className="tw-flex tw-gap-4">
-              {Icon ? <Icon /> : null}
-              <strong>{titleList[0]}</strong>
-              <SquareChevronDown />
-            </p>
-            <WeatherStatistics
-              data={weatherDataOne}
-              dataKey={key}
-              sign={titleList[1]}
-            />
-          </TableCell>
-          <TableCell>
-            <p className="tw-flex tw-gap-4">
-              {Icon ? <Icon /> : null}
-              <strong>{titleList[0]}</strong>
-              <SquareChevronDown />
-            </p>
-            <WeatherStatistics
-              data={weatherDataTwo}
-              dataKey={key}
-              sign={titleList[1]}
-            />
-          </TableCell>
-        </TableRow>
-      );
-    });
-  }, [weatherDataOne, weatherDataTwo]);
-
   return (
     <Table className=" tw-my-8 ">
       <TableHeader>
-        <TableRow className="">
-          <TableHead className=" tw-text-indigo-100 tw-text-2xl tw-font-extrabold">
-            <p className="tw-py-3">{formatMmDdYyToDateString(firstDatetime)}</p>
-          </TableHead>
-          <TableHead className="tw-text-indigo-100 tw-text-2xl tw-font-extrabold">
-            <p className="tw-py-3">
-              {formatMmDdYyToDateString(secondDatetime)}
-            </p>
-          </TableHead>
-        </TableRow>
+        <TableHeaderRow
+          firstDatetime={firstDatetime}
+          secondDatetime={secondDatetime}
+        />
       </TableHeader>
-      <TableBody>{weatherTableRow}</TableBody>
+      <TableBody>
+        <WeatherTableRow
+          weatherDataOne={weatherDataOne}
+          weatherDataTwo={weatherDataTwo}
+        />
+      </TableBody>
     </Table>
   );
 }
