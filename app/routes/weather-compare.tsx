@@ -1,18 +1,20 @@
 import { LoaderFunction, LoaderFunctionArgs, defer } from "@remix-run/node";
 import { Link, useLoaderData, Await } from "@remix-run/react";
 import OpenAI from "openai";
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 
 import "react-json-pretty/themes/monikai.css";
 
 import { getWeatherLocation } from "~/api/weather.api";
 import { SVG } from "~/components/chartcustomizedcursor";
+import CollapsibleCompareTable from "~/components/collapsable-weather-compare";
 import { MarkdownComponent } from "~/components/MarkdownComponent";
 import { StackChart } from "~/components/stackChart";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
 import { Header } from "~/components/ui/header";
 import { ScrollArea } from "~/components/ui/scroll-area";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "~/components/ui/tabs";
 import WeatherCompareTable from "~/components/WeatherCompareTable";
 import { chatgptPrompt } from "~/constants";
 import d1 from "~/temp-data/data1.json";
@@ -110,7 +112,19 @@ export const loader: LoaderFunction = async ({
 export default function RemixLoader() {
   const { dataOne, dataTwo, content } = useLoaderData<typeof loader>();
   const shouldRender = dataOne && dataTwo;
-
+  const MemoizedTabListTrigger = useMemo(
+    () =>
+      ["Alt View One", "Alt View Two"].map((value) => (
+        <TabsTrigger
+          key={value}
+          value={value}
+          className="tw-w-full tw-text-center tw-p-4"
+        >
+          {value}
+        </TabsTrigger>
+      )),
+    [],
+  );
   return (
     <>
       <Header
@@ -154,12 +168,30 @@ export default function RemixLoader() {
           </div>
           {shouldRender ? (
             <section className="tw-flex tw-justify-center">
-              <WeatherCompareTable
-                firstDatetime={dataOne.days[0].datetime}
-                secondDatetime={dataTwo.days[0].datetime}
-                weatherDataOne={dataOne.days[0].hours}
-                weatherDataTwo={dataTwo.days[0].hours}
-              />
+              <Tabs
+                defaultValue="Alt View One"
+                className="tw-w-full tw-mt-16 tw-flex tw-flex-col tw-justify-center tw-items-center "
+              >
+                <TabsList className="tw-flex tw-flex-row tw-justify-center tw-items-center tw-gap-4 tw-p-4">
+                  {MemoizedTabListTrigger}
+                </TabsList>
+                <TabsContent value="Alt View One">
+                  <WeatherCompareTable
+                    firstDatetime={dataOne.days[0].datetime}
+                    secondDatetime={dataTwo.days[0].datetime}
+                    weatherDataOne={dataOne.days[0].hours}
+                    weatherDataTwo={dataTwo.days[0].hours}
+                  />
+                </TabsContent>
+                <TabsContent value="Alt View Two" className="tw-w-full">
+                  <CollapsibleCompareTable
+                    firstDatetime={dataOne.days[0].datetime}
+                    secondDatetime={dataTwo.days[0].datetime}
+                    weatherDataOne={dataOne.days[0].hours}
+                    weatherDataTwo={dataTwo.days[0].hours}
+                  />
+                </TabsContent>
+              </Tabs>
             </section>
           ) : null}
         </main>
