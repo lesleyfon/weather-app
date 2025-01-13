@@ -56,6 +56,7 @@ export function convertYYYYMMDDToDate(dateString: string): Date {
   
       return { defaultFirstDate: d1, defaultSecondDate: d2 };
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error setting default dates:', error);
     return { defaultFirstDate: defaultDate, defaultSecondDate: defaultDate };
   }
@@ -108,12 +109,13 @@ export const hourDataKeysToFullWord = {
   feelslike: ["Feels Like", "°F"],
   conditions: ["Conditions", ""],
   precip: ["Precipitation", " in"],
-  snow: ["Chance Of Snow", "%"],
+  snow: ["Snow", "%"],
   humidity: ["Humidity", "%"],
   windspeed: ["Wind Speed", " mph"],
-  windgust: ["Wind Gust", " Miles"],
+  windgust: ["Wind Gust", " mph"],
   cloudcover: ["Cloud Cover", "%"],
-  visibility: ["Visibility", " Miles"],
+  visibility: ["Visibility", " mi"],
+  dew: ["Dew Point", " °F"],
 };
 
 
