@@ -9,6 +9,7 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react";
+import { SpeedInsights } from "@vercel/speed-insights/remix";
 import { useEffect } from "react";
 
 import stylesheet from "~/tailwind.css";
@@ -66,6 +67,7 @@ export default function App() {
         />
         <Scripts />
         <LiveReload />
+        <SpeedInsights />
       </body>
     </html>
   );
