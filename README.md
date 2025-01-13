@@ -3,6 +3,14 @@
 
 A modern web application that enables users to compare weather conditions between different dates at any location. Built with Remix, TypeScript, and powered by Visual Crossing Weather API and Google Places API for location search.
 
+![Home Page](./app//assets/img/Screenshot%202025-01-13%20at%2011.36.41 AM.png)
+![Graph Comparison for temperature between two dates](./app//assets/img/Screenshot%202025-01-13%20at%2011.35.35 AM.png)
+![Table Comparing Min and Max Temperatures](./app//assets/img/Screenshot%202025-01-13%20at%2011.35.55 AM.png)
+![Table Comparing Hourly Temperatures](./app/assets/img/Screenshot%202025-01-13%20at%2011.36.08 AM.png)
+
+
+
+
 ## Features 🚀
 
 ### Location Search
