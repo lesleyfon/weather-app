@@ -1,3 +1,13 @@
+import {
+   CloudRain,
+   Cloudy,
+   Droplets,
+   Eye,
+   Snowflake,
+   ThermometerSnowflake,
+   Wind,
+ } from "lucide-react";
+
 export const chatgptPrompt = (dateOne: string, dateTwo: string) => `
 Based on the two pieces of data, I want you to compare and contrast them. And the response should follow the following format in markdown:
 
@@ -51,3 +61,22 @@ Based on the two pieces of data, I want you to compare and contrast them. And th
   **${dateTwo}** shows slightly colder perceived temperatures and higher cloud cover, while **${dateOne}** has higher wind speeds and solar radiation.
 
 `
+
+export const nonMinMaxWeatherKeys = new Set([
+   "conditions",
+   "datetime",
+   "icon",
+   "source",
+   "stations",
+ ]);
+
+
+ export const weatherConditionsToIconMap = {
+   temp: ThermometerSnowflake,
+   windspeed: Wind,
+   precip: CloudRain,
+   snow: Snowflake,
+   visibility: Eye,
+   dew: Droplets,
+   cloudcover: Cloudy,
+ } as const;
