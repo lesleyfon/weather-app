@@ -25,11 +25,27 @@ export const dateStringTo = (date: string) =>
 
 export function formatMmDdYyToDateString(date:string| null){
   if (!date) return "";
+  const regexYYYYMMDD = /^\d{4}-\d{2}-\d{2}$/;
+  const regexMMDDYY = /^\d{2}-\d{2}-\d{4}$/;
+  let year, month, day;
+
+  if (regexYYYYMMDD.test(date)) {
+    [year, month, day] = date.split("-").map(Number);
+  }
+
+  if (regexMMDDYY.test(date)) {
+    [month, day, year] = date.split("-").map(Number);
+  }
+
+  if(year && month && day){
     return Intl.DateTimeFormat("en-US", {
       month: "long",
       day: "numeric",
       year: "numeric",
-    }).format(new Date(date));
+    }).format(new Date(year, month - 1, day));
+  }
+
+  return date;
 }
 
 export function convertYYYYMMDDToDate(dateString: string): Date {
