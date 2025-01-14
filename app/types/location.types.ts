@@ -275,3 +275,18 @@ export interface ChatCompletionResponse {
     index: number;
   }[];
 }
+
+
+export interface ExpandableWeatherRowProps {
+  titleList: string[];
+  dataKey: keyof HourWeatherData;
+  weatherDataTwo: HourWeatherData[];
+  weatherDataOne: HourWeatherData[];
+}
+
+export interface TableCellContentProps
+  extends Pick<ExpandableWeatherRowProps, "titleList" | "dataKey"> {
+  Icon: React.ComponentType | null;
+  weatherData: HourWeatherData[];
+  openCollapsable: boolean;
+}
