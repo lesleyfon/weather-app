@@ -1,13 +1,17 @@
-import { SquareChevronDown } from "lucide-react";
-import { memo } from "react";
+import { SquareChevronDown, SquareChevronUp } from "lucide-react";
+import { memo, useCallback, useState } from "react";
 
 import { nonMinMaxWeatherKeys, weatherConditionsToIconMap } from "~/constants";
+import { cn } from "~/lib/utils";
 import {
   HourWeatherData,
   WeatherCompareTableProps,
+  ExpandableWeatherRowProps,
+  TableCellContentProps,
 } from "~/types/location.types";
 import { formatMmDdYyToDateString, hourDataKeysToFullWord } from "~/utils";
 
+import { Collapsible, CollapsibleContent } from "./ui/collapsible";
 import {
   Table,
   TableBody,
@@ -90,18 +94,13 @@ const TableCellContent = memo(
     titleList,
     weatherData,
     dataKey,
-  }: {
-    Icon: React.ComponentType | null;
-    titleList: string[];
-    weatherData: HourWeatherData[];
-    dataKey: keyof HourWeatherData;
-  }) => (
+    openCollapsable,
+  }: TableCellContentProps) => (
     <>
-      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role */}
-      <p className="tw-flex tw-gap-4" role="button" aria-expanded="false">
+      <p className="tw-flex tw-gap-4" aria-expanded="false">
         {Icon ? <Icon aria-hidden="true" /> : null}
         <strong>{titleList[0]}</strong>
-        <SquareChevronDown aria-hidden="true" />
+        {openCollapsable ? <SquareChevronUp /> : <SquareChevronDown />}
       </p>
       <WeatherMetricsOverview
         data={weatherData}
@@ -113,37 +112,80 @@ const TableCellContent = memo(
 );
 TableCellContent.displayName = "TableCellContent";
 
+function ExpandableWeatherRow({
+  titleList,
+  weatherDataTwo,
+  weatherDataOne,
+  dataKey,
+}: ExpandableWeatherRowProps) {
+  const [openCollapsable, setOpenCollapsable] = useState(false);
+
+  const handleToggleCollapsable = useCallback(() => {
+    setOpenCollapsable(!openCollapsable);
+  }, [openCollapsable]);
+
+  const Icon =
+    dataKey in weatherConditionsToIconMap && (dataKey as WeatherIconKeys)
+      ? weatherConditionsToIconMap[dataKey as WeatherIconKeys]
+      : null;
+  return (
+    <>
+      <TableRow
+        className={cn(
+          "tw-text-indigo-100 hover:tw-bg-indigo-900/50 tw-transition tw-duration-500 tw-ease-in-out tw-cursor-pointer",
+          openCollapsable ? "tw-border-b-0" : "",
+        )}
+        onClick={handleToggleCollapsable}
+      >
+        {[weatherDataOne, weatherDataTwo].map((weatherData) => (
+          <TableCell key={dataKey}>
+            <TableCellContent
+              Icon={Icon}
+              titleList={titleList}
+              weatherData={weatherData}
+              dataKey={dataKey}
+              openCollapsable={openCollapsable}
+            />
+          </TableCell>
+        ))}
+      </TableRow>
+      <TableRow className={cn(openCollapsable ? "tw-table-row" : "tw-hidden")}>
+        <TableCell colSpan={2}>
+          <Collapsible open={openCollapsable}>
+            <CollapsibleContent>
+              Yes. Free to use for personal and commercial projects. No
+              attribution required.
+            </CollapsibleContent>
+          </Collapsible>
+        </TableCell>
+      </TableRow>
+    </>
+  );
+}
+
 const WeatherTableRow = memo(
   ({
     weatherDataOne,
     weatherDataTwo,
-  }: Pick<WeatherCompareTableProps, "weatherDataOne" | "weatherDataTwo">) => (
-    <>
-      {Object.entries(hourDataKeysToFullWord).map(([key, titleList]) => {
-        const Icon =
-          key in weatherConditionsToIconMap && (key as WeatherIconKeys)
-            ? weatherConditionsToIconMap[key as WeatherIconKeys]
-            : null;
-        return (
-          <TableRow
-            key={key}
-            className="tw-text-indigo-100 hover:tw-bg-indigo-900/50 tw-transition tw-duration-500 tw-ease-in-out"
-          >
-            {[weatherDataOne, weatherDataTwo].map((weatherData) => (
-              <TableCell key={key}>
-                <TableCellContent
-                  Icon={Icon}
-                  titleList={titleList}
-                  weatherData={weatherData}
-                  dataKey={key as keyof HourWeatherData}
-                />
-              </TableCell>
-            ))}
-          </TableRow>
-        );
-      })}
-    </>
-  ),
+  }: Pick<WeatherCompareTableProps, "weatherDataOne" | "weatherDataTwo">) => {
+    return (
+      <>
+        {Object.entries(hourDataKeysToFullWord).map(([key, titleList]) => {
+          return (
+            <ExpandableWeatherRow
+              key={key}
+              {...{
+                weatherDataOne,
+                weatherDataTwo,
+                dataKey: key as keyof HourWeatherData,
+                titleList: titleList,
+              }}
+            />
+          );
+        })}
+      </>
+    );
+  },
 );
 WeatherTableRow.displayName = "WeatherTableRow";
 
