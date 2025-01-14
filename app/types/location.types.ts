@@ -290,3 +290,8 @@ export interface TableCellContentProps
   weatherData: HourWeatherData[];
   openCollapsable: boolean;
 }
+
+export interface ExpandedHourlyComparisonProps extends Pick<
+ExpandableWeatherRowProps,
+"dataKey" | "weatherDataTwo" | "weatherDataOne" | "titleList"
+>  { openCollapsable: boolean }
