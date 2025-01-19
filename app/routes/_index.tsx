@@ -4,19 +4,27 @@ import {
   type ActionFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
-import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
+import {
+  Link,
+  useActionData,
+  useSearchParams,
+  Form,
+  useFetcher,
+} from "@remix-run/react";
 import posthog from "posthog-js";
 import { useMemo } from "react";
 
 import { getGeocode } from "~/api/weather.api";
 import { SVG } from "~/components/chartcustomizedcursor";
 import DatePickerComponent from "~/components/datepicker";
+import FormError from "~/components/form-errors";
 import LocationAutoComplete from "~/components/locationautocomplete";
 import { Button } from "~/components/ui/button";
 import { Header } from "~/components/ui/header";
 import { ENV_TYPES, QUERY_PARAMS_ENUM, DateType } from "~/types/location.types";
-import { setURLParamsAsDefaultDate } from "~/utils";
+import { setURLParamsAsDefaultDate, canNavigateWithAllParams } from "~/utils";
 
+// THIS IS THE ACTION FOR THE FORM. WILL BE USE AS A FALLBACK IF JS IS DISABLED.
 export const action = async ({ request }: ActionFunctionArgs) => {
   const form = await request.formData();
   const location = form.get("location") as string;
@@ -32,7 +40,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   const queryParams = new URLSearchParams();
   const errors: Record<string, string> = {};
-  // TODO Added better error handling. MAYBE prevent form from submitting
   if (!location) {
     errors.location = "Location is required";
   }
@@ -42,6 +49,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (Object.keys(errors).length > 0) {
     return json({ errors }, { status: 400 });
+  }
+
+  // if the user has already submitted the form, redirect to the weather-compare page
+  if (
+    url.searchParams.has(QUERY_PARAMS_ENUM.LONGITUDE) &&
+    url.searchParams.has(QUERY_PARAMS_ENUM.LATITUDE)
+  ) {
+    return redirect(`/weather-compare${url.search}`);
   }
 
   const response = await getGeocode({
@@ -60,39 +75,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     if (secondDate) queryParams.set(QUERY_PARAMS_ENUM.SECOND_DATE, secondDate);
   }
 
-  return redirect("/weather-compare?" + queryParams.toString());
+  return redirect(`/weather-compare?${queryParams.toString()}`);
 };
-
-function FormError({
-  errors,
-}: {
-  errors?: { location?: string; date?: string };
-}) {
-  if (errors && errors.location && errors.date) {
-    return (
-      <p className="tw-text-left tw-w-full tw-text-red-700  tw-px-4">
-        You are missing both Location and Date. Please Ensure you Include a
-        location and a Date
-      </p>
-    );
-  }
-
-  if (errors && errors.date) {
-    return (
-      <p className="tw-text-left tw-w-full tw-text-red-700 tw-px-4">
-        {errors.date}
-      </p>
-    );
-  }
-  if (errors && errors.location) {
-    return (
-      <p className="tw-text-left tw-w-full tw-text-red-700">
-        {errors.location}
-      </p>
-    );
-  }
-  return null;
-}
 
 export const meta: MetaFunction = () => {
   return [
@@ -106,6 +90,8 @@ export const meta: MetaFunction = () => {
 
 function Index() {
   const actionData = useActionData<typeof action>();
+
+  const preFetcher = useFetcher();
   const [searchParams] = useSearchParams();
 
   const firstDate = searchParams.get(QUERY_PARAMS_ENUM.FIRST_DATE);
@@ -116,6 +102,11 @@ function Index() {
     [firstDate, secondDate],
   );
 
+  const canNavigate = useMemo(canNavigateWithAllParams, [searchParams]);
+
+  const trackButtonClick = () => {
+    posthog.capture("button_clicked");
+  };
   return (
     <>
       <Header
@@ -147,17 +138,29 @@ function Index() {
             dateType={DateType.SECOND}
             defaultDate={defaultSecondDate}
           />
-          <Button
-            type="submit"
-            className="tw-bg-indigo-950 tw-text-white tw-h-[52px]"
-            onClick={() => {
-              posthog.capture("button_clicked");
-            }}
-          >
-            Submit
-          </Button>
+          {canNavigate ? (
+            <Link
+              to={`/weather-compare${window.location.search}`}
+              prefetch="intent"
+              className="tw-bg-indigo-950 tw-text-white tw-h-[52px] tw-flex tw-items-center tw-justify-center tw-rounded-md"
+              onClick={trackButtonClick}
+              onMouseOver={() => {
+                preFetcher.load(`/weather-compare${window.location.search}`);
+              }}
+            >
+              Submit
+            </Link>
+          ) : (
+            <Button
+              type="submit"
+              className="tw-bg-indigo-950 tw-text-white tw-h-[52px]"
+              onClick={trackButtonClick}
+            >
+              Submit
+            </Button>
+          )}
         </Form>
-        {actionData?.errors ? <FormError errors={actionData.errors} /> : null}
+        <FormError errors={actionData?.errors ?? {}} />
       </main>
     </>
   );
