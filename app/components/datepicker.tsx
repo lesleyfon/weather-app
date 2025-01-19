@@ -1,3 +1,4 @@
+// datepicker.tsx
 "use client";
 
 import { useSearchParams } from "@remix-run/react";
@@ -12,7 +13,7 @@ import {
   DateType,
   QUERY_PARAMS_ENUM,
 } from "~/types/location.types";
-import { shouldDisableDate } from "~/utils";
+import { shouldDisableDate, updateSearchParams } from "~/utils";
 
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
@@ -52,9 +53,13 @@ export default function DatePicker({
           return;
         }
 
-        setSearchParams({
-          [QUERY_PARAMS_ENUM.FIRST_DATE]: getDateValue(DateType.FIRST),
-          [QUERY_PARAMS_ENUM.SECOND_DATE]: getDateValue(DateType.SECOND),
+        updateSearchParams({
+          setSearchParams,
+          searchParams,
+          newSearchParams: {
+            [QUERY_PARAMS_ENUM.FIRST_DATE]: getDateValue(DateType.FIRST),
+            [QUERY_PARAMS_ENUM.SECOND_DATE]: getDateValue(DateType.SECOND),
+          },
         });
       };
     },
