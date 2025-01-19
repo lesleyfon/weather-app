@@ -9,6 +9,7 @@ export enum QUERY_PARAMS_ENUM {
   SECOND_DATE = "second-date",
   LONGITUDE = "longitude",
   LATITUDE = "latitude",
+  SELECTED = "selected",
 }
 export interface AddressComponentType {
   long_name: string;
