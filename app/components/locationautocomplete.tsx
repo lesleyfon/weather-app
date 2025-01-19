@@ -1,18 +1,22 @@
+// locationautocomplete.tsx
 import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { debounce } from "@mui/material/utils";
+import { useSearchParams } from "@remix-run/react";
 import { Fragment, useEffect, useMemo, useState } from "react";
 
 import {
   LocationPrediction,
   AutocompleteResponse,
+  QUERY_PARAMS_ENUM,
 } from "~/types/location.types";
+import { updateSearchParams } from "~/utils";
 
 export default function LocationAutoComplete() {
   const [selected, setSelected] = useState("");
   const [options, setOptions] = useState<readonly LocationPrediction[]>([]);
   const [query, setQuery] = useState("");
-
+  const [searchParams, setSearchParams] = useSearchParams();
   const fetchData = useMemo(
     () =>
       debounce(
@@ -62,9 +66,47 @@ export default function LocationAutoComplete() {
     };
   }, [query, fetchData]);
 
+  useEffect(() => {
+    if (searchParams.has(QUERY_PARAMS_ENUM.SELECTED)) {
+      setSelected(searchParams.get(QUERY_PARAMS_ENUM.SELECTED) ?? "");
+    }
+  }, [searchParams, selected, setSearchParams]);
+
+  // TODO: add better error handling
+  /**
+   * @description a function that handles the location selection
+   */
+  function handleLocationSelect(): ((value: string) => void) | undefined {
+    return (location) => {
+      setSelected(location);
+      if (location) {
+        fetch(`api/geocode/${location}`)
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            if (data?.data) {
+              const responseData = data.data.results[0]?.geometry?.location;
+              const { lng, lat } = responseData;
+
+              updateSearchParams({
+                setSearchParams,
+                searchParams,
+                newSearchParams: {
+                  [QUERY_PARAMS_ENUM.SELECTED]: location,
+                  [QUERY_PARAMS_ENUM.LONGITUDE]: lng,
+                  [QUERY_PARAMS_ENUM.LATITUDE]: lat,
+                },
+              });
+            }
+          });
+      }
+    };
+  }
+
   return (
     <div className="tw-top-16">
-      <Combobox value={selected} onChange={setSelected}>
+      <Combobox value={selected} onChange={handleLocationSelect()}>
         <div className="tw-relative tw-mt-1 tw-border-1">
           <div className="tw-focus:tw-outline-none tw-focus-visible:tw-ring-2 tw-focus-visible:tw-ring-white/75 tw-focus-visible:tw-ring-offset-2 tw-focus-visible:tw-ring-offset-teal-300 tw-sm:text-sm tw-relative tw-w-full tw-cursor-default tw-overflow-hidden tw-rounded-lg tw-bg-white tw-text-left tw-border tw-border-gray-200">
             <Combobox.Input
