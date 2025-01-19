@@ -3,6 +3,7 @@ import {
   type WeatherData,
   type DateParams,
   type DefaultDates,
+  QUERY_PARAMS_ENUM,
 } from "./types/location.types";
 
 export const militaryTimeToStandardTime = (time: string) => {
@@ -197,3 +198,38 @@ export const getWeatherTheme = (condition: WeatherCondition): WeatherTheme => {
 
   return themes[condition] || themes.sunny;
 };
+
+
+export function canNavigateWithAllParams (): boolean {
+  if (typeof window === "undefined") return false;
+  const url = new URL(window?.location?.href || "");
+  return [
+    QUERY_PARAMS_ENUM.FIRST_DATE,
+    QUERY_PARAMS_ENUM.SECOND_DATE,
+    QUERY_PARAMS_ENUM.LONGITUDE,
+    QUERY_PARAMS_ENUM.LATITUDE,
+  ].every((param) => url.searchParams.has(param));
+};
+
+
+type SetSearchParamsParams = Record<string, string>
+export interface UpdateSearchParamsProps {
+  searchParams: URLSearchParams;
+  setSearchParams: (params: SetSearchParamsParams)=>void;
+  newSearchParams: Record<string, string>;
+}
+export function updateSearchParams({
+  searchParams, 
+  setSearchParams,
+  newSearchParams,
+}: UpdateSearchParamsProps) {
+  const updatedParams = new URLSearchParams(searchParams);
+  
+  
+
+  Object.entries(newSearchParams).forEach(([key, value]) => {
+    updatedParams.set(key, value);
+  });
+
+  setSearchParams(Object.fromEntries(updatedParams.entries()));
+}
